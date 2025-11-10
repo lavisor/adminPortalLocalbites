@@ -1,0 +1,57 @@
+<mat-sidenav-container class="sidenav-container">
+  <!-- Sidenav -->
+  <mat-sidenav
+    #sidenav
+    mode="side"
+    [opened]="true"
+    class="sidenav"
+    [style.width.px]="isExpanded ? 250 : 64"
+  >
+    <div class="sidenav-header">
+      <div class="restaurant-info" *ngIf="isExpanded">
+        <mat-icon class="restaurant-icon">store</mat-icon>
+        <span class="restaurant-name">{{ hotelName }}</span>
+      </div>
+      @if(false){
+        <button mat-icon-button (click)="toggleSidenav()" class="toggle-btn">
+          <mat-icon>{{ isExpanded ? 'chevron_left' : 'chevron_right' }}</mat-icon>
+        </button>
+      }
+    </div>
+    
+    <mat-nav-list class="nav-list-container">
+      @for(item of menuItems; track item.label){
+        <a
+        mat-list-item
+        [routerLink]="item.path"
+        routerLinkActive="active-link"
+        class="nav-item"
+      >
+        <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
+        <span matListItemTitle *ngIf="isExpanded" class="nav-label">{{ item.label }}</span>
+      </a>
+      }
+
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <!-- Main Content -->
+  <mat-sidenav-content>
+    <!-- Top Bar -->
+    <mat-toolbar color="primary" class="top-bar">
+      <div class="toolbar-left">
+        <span *ngIf="!isExpanded" class="hotel-name">{{ hotelName }}</span>
+      </div>
+      <div class="toolbar-right">
+        <button mat-icon-button class="user-button">
+          <mat-icon>account_circle</mat-icon>
+        </button>
+      </div>
+    </mat-toolbar>
+
+    <!-- Router Outlet for nested routes -->
+    <div class="content-area">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
