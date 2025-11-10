@@ -1,1 +1,88 @@
-<p>dashboard works!</p>
+<div class="dashboard-container">
+  <h1>Dashboard</h1>
+  
+  <!-- Demo: Cross-Module Access to Menu Store -->
+  <mat-card class="menu-access-demo">
+    <mat-card-header>
+      <mat-card-title>📊 Menu Store Access Demo (Cross-Module)</mat-card-title>
+      <mat-card-subtitle>
+        Dashboard component accessing Menu module's NgRx store
+      </mat-card-subtitle>
+    </mat-card-header>
+
+    <mat-card-content>
+      <div *ngIf="menuLoading$ | async" class="loading">
+        Loading menu data from shared store...
+      </div>
+
+      <div *ngIf="!(menuLoading$ | async)">
+        <!-- Statistics -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <h3>Total Menu Items</h3>
+            <p class="stat-value">{{ (menuItems$ | async)?.length || 0 }}</p>
+          </div>
+
+          <div class="stat-card">
+            <h3>Available Items</h3>
+            <p class="stat-value available">{{ (availableMenuItems$ | async)?.length || 0 }}</p>
+          </div>
+
+          <div class="stat-card">
+            <h3>Categories</h3>
+            <p class="stat-value">{{ (categories$ | async)?.length || 0 }}</p>
+          </div>
+        </div>
+
+        <!-- Categories List -->
+        <div class="categories-section">
+          <h3>Menu Categories</h3>
+          <mat-list>
+            <mat-list-item *ngFor="let category of categories$ | async">
+              {{ category }}
+            </mat-list-item>
+          </mat-list>
+        </div>
+
+        <!-- Available Menu Items -->
+        <div class="available-items-section">
+          <h3>Available Menu Items</h3>
+          <mat-list>
+            <mat-list-item *ngFor="let item of availableMenuItems$ | async">
+              <div class="menu-item-row">
+                <span class="item-name">{{ item.name }}</span>
+                <span class="item-price">${{ item.price | number:'1.2-2' }}</span>
+              </div>
+            </mat-list-item>
+          </mat-list>
+        </div>
+
+        <!-- Refresh Button -->
+        <div class="actions">
+          <button mat-raised-button color="primary" (click)="refreshMenuData()">
+            Refresh Menu Data
+          </button>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Explanation Card -->
+  <mat-card class="explanation-card">
+    <mat-card-header>
+      <mat-card-title>✅ Cross-Module Store Access Confirmed</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p><strong>This demonstrates:</strong></p>
+      <ul>
+        <li>Dashboard component successfully accesses Menu store via MenuFacade</li>
+        <li>Data is shared across modules (single source of truth)</li>
+        <li>Changes in Menu component are reflected here automatically</li>
+        <li>Store is centralized and globally accessible</li>
+      </ul>
+      <p class="note">
+        <em>Note: Navigate to the Menu page to see the same data. Changes there will update this view automatically!</em>
+      </p>
+    </mat-card-content>
+  </mat-card>
+</div>

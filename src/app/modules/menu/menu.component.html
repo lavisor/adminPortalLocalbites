@@ -1,31 +1,90 @@
-<div class="mat-elevation-z8">
-    <table mat-table [dataSource]="dataSource">
-  
-      <!-- Position Column -->
-      <ng-container matColumnDef="position">
-        <th mat-header-cell *matHeaderCellDef> No. </th>
-        <td mat-cell *matCellDef="let element"> {{element.position}} </td>
-      </ng-container>
-  
-      <!-- Name Column -->
-      <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef> Name </th>
-        <td mat-cell *matCellDef="let element"> {{element.name}} </td>
-      </ng-container>
-  
-      <!-- Weight Column -->
-      <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef> Weight </th>
-        <td mat-cell *matCellDef="let element"> {{element.weight}} </td>
-      </ng-container>
-  
-      <!-- Symbol Column -->
-      <ng-container matColumnDef="symbol">
-        <th mat-header-cell *matHeaderCellDef> Symbol </th>
-        <td mat-cell *matCellDef="let element"> {{element.symbol}} </td>
-      </ng-container>
-  
-      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-    </table>
-  </div>
+<div class="menu-container">
+  <mat-card>
+    <mat-card-header>
+      <mat-card-title>Menu Items</mat-card-title>
+      <button mat-raised-button color="primary" (click)="refreshMenuItems()">
+        Refresh Menu
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      <!-- Loading Spinner -->
+      <div *ngIf="loading$ | async" class="loading-container">
+        <mat-spinner></mat-spinner>
+        <p>Loading menu items...</p>
+      </div>
+
+      <!-- Error Message -->
+      <div *ngIf="error$ | async as error" class="error-message">
+        <p>Error: {{ error }}</p>
+        <button mat-button color="warn" (click)="refreshMenuItems()">Retry</button>
+      </div>
+
+      <!-- Menu Table -->
+      <div *ngIf="!(loading$ | async) && !(error$ | async)">
+        <mat-table [dataSource]="(menuItems$ | async) || []" class="menu-table">
+          <!-- Name Column -->
+          <ng-container matColumnDef="name">
+            <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
+            <mat-cell *matCellDef="let item">{{ item.name }}</mat-cell>
+          </ng-container>
+
+          <!-- Category Column -->
+          <ng-container matColumnDef="category">
+            <mat-header-cell *matHeaderCellDef>Category</mat-header-cell>
+            <mat-cell *matCellDef="let item">{{ item.category }}</mat-cell>
+          </ng-container>
+
+          <!-- Price Column -->
+          <ng-container matColumnDef="price">
+            <mat-header-cell *matHeaderCellDef>Price</mat-header-cell>
+            <mat-cell *matCellDef="let item">${{ item.price | number:'1.2-2' }}</mat-cell>
+          </ng-container>
+
+          <!-- Availability Column -->
+          <ng-container matColumnDef="isAvailable">
+            <mat-header-cell *matHeaderCellDef>Available</mat-header-cell>
+            <mat-cell *matCellDef="let item">
+              <span [class.available]="item.isAvailable" [class.unavailable]="!item.isAvailable">
+                {{ item.isAvailable ? 'Yes' : 'No' }}
+              </span>
+            </mat-cell>
+          </ng-container>
+
+          <!-- Preparation Time Column -->
+          <ng-container matColumnDef="preparationTime">
+            <mat-header-cell *matHeaderCellDef>Prep Time</mat-header-cell>
+            <mat-cell *matCellDef="let item">{{ item.preparationTime }} min</mat-cell>
+          </ng-container>
+
+          <!-- Header and Row Declarations -->
+          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
+          <mat-row 
+            *matRowDef="let row; columns: displayedColumns"
+            (click)="selectMenuItem(row)"
+            class="menu-row">
+          </mat-row>
+        </mat-table>
+
+        <!-- No Data Message -->
+        <div *ngIf="(menuItems$ | async)?.length === 0" class="no-data">
+          <p>No menu items available</p>
+        </div>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Categories Section -->
+  <mat-card class="categories-card">
+    <mat-card-header>
+      <mat-card-title>Categories</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div *ngIf="categories$ | async as categories" class="categories-list">
+        <span *ngFor="let category of categories" class="category-chip">
+          {{ category }}
+        </span>
+      </div>
+    </mat-card-content>
+  </mat-card>
+</div>
