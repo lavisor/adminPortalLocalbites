@@ -4,7 +4,6 @@ import { provideHttpClient } from '@angular/common/http';
 import { provideStore } from '@ngrx/store';
 import { provideEffects } from '@ngrx/effects';
 import { provideStoreDevtools } from '@ngrx/store-devtools';
-
 import { routes } from './app.routes';
 import { menuReducer } from './data/menu/ngrx/menu.reducer';
 import { MenuEffects } from './data/menu/ngrx/menu.effects';

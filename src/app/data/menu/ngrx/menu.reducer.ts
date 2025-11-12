@@ -1,5 +1,5 @@
 import { createReducer, on } from '@ngrx/store';
-import { menuAdapter, initialMenuState } from './menu.state';
+import { initialMenuState } from './menu.state';
 import * as MenuActions from './menu.actions';
 
 export const menuReducer = createReducer(
@@ -12,15 +12,14 @@ export const menuReducer = createReducer(
     error: null
   })),
 
-  on(MenuActions.loadMenuItemsSuccess, (state, { items }) =>
-    menuAdapter.setAll(items, {
-      ...state,
-      loading: false,
-      loaded: true,
-      error: null,
-      lastUpdated: Date.now()
-    })
-  ),
+  on(MenuActions.loadMenuItemsSuccess, (state, { items }) => ({
+    ...state,
+    menuList: items,
+    loading: false,
+    loaded: true,
+    error: null,
+    lastUpdated: Date.now()
+  })),
 
   on(MenuActions.loadMenuItemsFailure, (state, { error }) => ({
     ...state,
@@ -36,13 +35,19 @@ export const menuReducer = createReducer(
     error: null
   })),
 
-  on(MenuActions.loadMenuItemByIdSuccess, (state, { item }) =>
-    menuAdapter.upsertOne(item, {
+  on(MenuActions.loadMenuItemByIdSuccess, (state, { item }) => {
+    const existingIndex = state.menuList.findIndex(i => i.id === item.id);
+    const updatedList = existingIndex >= 0
+      ? state.menuList.map(i => i.id === item.id ? item : i)
+      : [...state.menuList, item];
+    
+    return {
       ...state,
+      menuList: updatedList,
       loading: false,
       error: null
-    })
-  ),
+    };
+  }),
 
   on(MenuActions.loadMenuItemByIdFailure, (state, { error }) => ({
     ...state,
@@ -50,21 +55,20 @@ export const menuReducer = createReducer(
     error
   })),
 
-  // Create Menu Item (Optimistic Update)
+  // Create Menu Item
   on(MenuActions.createMenuItem, (state) => ({
     ...state,
     loading: true,
     error: null
   })),
 
-  on(MenuActions.createMenuItemSuccess, (state, { item }) =>
-    menuAdapter.addOne(item, {
-      ...state,
-      loading: false,
-      error: null,
-      lastUpdated: Date.now()
-    })
-  ),
+  on(MenuActions.createMenuItemSuccess, (state, { item }) => ({
+    ...state,
+    menuList: [...state.menuList, item],
+    loading: false,
+    error: null,
+    lastUpdated: Date.now()
+  })),
 
   on(MenuActions.createMenuItemFailure, (state, { error }) => ({
     ...state,
@@ -72,24 +76,20 @@ export const menuReducer = createReducer(
     error
   })),
 
-  // Update Menu Item (Optimistic Update)
+  // Update Menu Item
   on(MenuActions.updateMenuItem, (state) => ({
     ...state,
     loading: true,
     error: null
   })),
 
-  on(MenuActions.updateMenuItemSuccess, (state, { item }) =>
-    menuAdapter.updateOne(
-      { id: item.id, changes: item },
-      {
-        ...state,
-        loading: false,
-        error: null,
-        lastUpdated: Date.now()
-      }
-    )
-  ),
+  on(MenuActions.updateMenuItemSuccess, (state, { item }) => ({
+    ...state,
+    menuList: state.menuList.map(i => i.id === item.id ? item : i),
+    loading: false,
+    error: null,
+    lastUpdated: Date.now()
+  })),
 
   on(MenuActions.updateMenuItemFailure, (state, { error }) => ({
     ...state,
@@ -104,15 +104,14 @@ export const menuReducer = createReducer(
     error: null
   })),
 
-  on(MenuActions.deleteMenuItemSuccess, (state, { id }) =>
-    menuAdapter.removeOne(id, {
-      ...state,
-      loading: false,
-      error: null,
-      selectedMenuItemId: state.selectedMenuItemId === id ? null : state.selectedMenuItemId,
-      lastUpdated: Date.now()
-    })
-  ),
+  on(MenuActions.deleteMenuItemSuccess, (state, { id }) => ({
+    ...state,
+    menuList: state.menuList.filter(item => item.id !== id),
+    loading: false,
+    error: null,
+    selectedMenuItemId: state.selectedMenuItemId === id ? null : state.selectedMenuItemId,
+    lastUpdated: Date.now()
+  })),
 
   on(MenuActions.deleteMenuItemFailure, (state, { error }) => ({
     ...state,

@@ -1,7 +1,7 @@
-import { EntityState } from '@ngrx/entity';
 import { MenuItem } from './menu.model';
 
-export interface MenuState extends EntityState<MenuItem> {
+export interface MenuState {
+  menuList: MenuItem[];
   loading: boolean;
   loaded: boolean;
   error: string | null;

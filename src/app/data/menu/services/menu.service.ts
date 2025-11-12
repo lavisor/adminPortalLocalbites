@@ -1,15 +1,17 @@
 import { Injectable } from '@angular/core';
 import { Observable, of, delay, throwError } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { MenuItem } from '../models/menu.model';
 import { RESTAURANT_ID, BACKEND_URL } from '../../data.const';
 import { HttpClient } from '@angular/common/http';
+import { transformMenuItem, transformMenuItems } from '../utils/menu.utils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class MenuService {
   private menuItems: MenuItem[] = [];
-  private backendUrl: string = BACKEND_URL + '/menu'
+  private backendUrl: string = BACKEND_URL + '/api/menu'
 
   constructor(
     private http: HttpClient
@@ -20,8 +22,10 @@ export class MenuService {
    * @param restaurantId - The restaurant ID
    * @returns Observable of menu items
    */
-  getMenuItems(restaurantId: string): Observable<any> {
-    return this.http.get(this.backendUrl+'/'+ restaurantId);
+  getMenuItems(restaurantId: string): Observable<MenuItem[]> {
+    return this.http.get<any[]>(this.backendUrl + '/' + restaurantId).pipe(
+      map(response => transformMenuItems(response))
+    );
   }
 
   /**
@@ -42,15 +46,8 @@ export class MenuService {
    * @param menuItem - The menu item to create
    * @returns Observable of created menu item
    */
-  createMenuItem(menuItem: MenuItem): Observable<MenuItem> {
-    const newItem: MenuItem = {
-      ...menuItem,
-      itemAvailable: menuItem.itemAvailable ?? true,
-      createdOn: (new Date()).toDateString(),
-      isDeleted: false
-    };
-    this.menuItems.push(newItem);
-    return of(newItem).pipe(delay(500));
+  createMenuItem(menuItem: MenuItem): Observable<any> {
+    return this.http.post(this.backendUrl, menuItem);
   }
 
   /**
@@ -60,17 +57,9 @@ export class MenuService {
    * @returns Observable of updated menu item
    */
   updateMenuItem(id: string, updates: MenuItem): Observable<MenuItem> {
-    const index = this.menuItems.findIndex(item => item.id === id && !item.isDeleted);
-    if (index === -1) {
-      return throwError(() => new Error('Menu item not found'));
-    }
-
-    this.menuItems[index] = {
-      ...this.menuItems[index],
-      ...updates,
-    };
-
-    return of(this.menuItems[index]).pipe(delay(500));
+    return this.http.patch<any>(this.backendUrl + '/update/' + id, updates).pipe(
+      map(response => transformMenuItem(response))
+    );
   }
 
   /**
@@ -78,18 +67,8 @@ export class MenuService {
    * @param id - The menu item ID
    * @returns Observable of void
    */
-  deleteMenuItem(id: string): Observable<void> {
-    const index = this.menuItems.findIndex(item => item.id === id);
-    if (index === -1) {
-      return throwError(() => new Error('Menu item not found'));
-    }
-
-    this.menuItems[index] = {
-      ...this.menuItems[index],
-      isDeleted: true,
-    };
-
-    return of(void 0).pipe(delay(500));
+  deleteMenuItem(id: string): Observable<any> {
+    return this.http.delete(this.backendUrl+ '/delete/'+ id);
   }
 
   /**

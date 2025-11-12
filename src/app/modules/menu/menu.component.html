@@ -1,90 +1,80 @@
 <div class="menu-container">
-  <mat-card>
-    <mat-card-header>
-      <mat-card-title>Menu Items</mat-card-title>
-      <button mat-raised-button color="primary" (click)="refreshMenuItems()">
-        Refresh Menu
+  <!-- Header -->
+  <div class="menu-header">
+    <h1>Menu Items</h1>
+
+    <div class="header-actions"> 
+      <button mat-raised-button color="primary" (click)="addMenuItem()">
+        <mat-icon>add</mat-icon>
+        Add
       </button>
-    </mat-card-header>
+      <button mat-raised-button color="primary" (click)="refreshMenuItems()">
+        <mat-icon>refresh</mat-icon>
+        Refresh
+      </button>
+    </div>
+  </div>
 
-    <mat-card-content>
-      <!-- Loading Spinner -->
-      <div *ngIf="loading$ | async" class="loading-container">
-        <mat-spinner></mat-spinner>
-        <p>Loading menu items...</p>
+  <!-- Loading Spinner -->
+  <div *ngIf="loading$ | async" class="loading-container">
+    <mat-spinner></mat-spinner>
+    <p>Loading menu items...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="error$ | async as error" class="error-message">
+    <p>Error: {{ error }}</p>
+    <button mat-button color="warn" (click)="refreshMenuItems()">Retry</button>
+  </div>
+
+  <!-- Menu List -->
+  <div *ngIf="!(loading$ | async) && !(error$ | async)" class="menu-list">
+    
+    <!-- No Data Message -->
+    <div *ngIf="(menuItems$ | async)?.length === 0" class="no-data">
+      <mat-icon>restaurant_menu</mat-icon>
+      <p>No menu items available</p>
+    </div>
+
+    <!-- Menu Items -->
+    <div *ngFor="let item of menuItems$ | async" class="menu-item">
+      <!-- Image Preview -->
+      <div class="item-image">
+        <img [src]="getImageUrl(item)" 
+             [alt]="item.name"
+             (error)="$any($event.target).src='https://www.foodservicerewards.com/cdn/shop/t/262/assets/fsr-placeholder.png?v=45093109498714503231652397781'">
       </div>
 
-      <!-- Error Message -->
-      <div *ngIf="error$ | async as error" class="error-message">
-        <p>Error: {{ error }}</p>
-        <button mat-button color="warn" (click)="refreshMenuItems()">Retry</button>
-      </div>
-
-      <!-- Menu Table -->
-      <div *ngIf="!(loading$ | async) && !(error$ | async)">
-        <mat-table [dataSource]="(menuItems$ | async) || []" class="menu-table">
-          <!-- Name Column -->
-          <ng-container matColumnDef="name">
-            <mat-header-cell *matHeaderCellDef>Name</mat-header-cell>
-            <mat-cell *matCellDef="let item">{{ item.name }}</mat-cell>
-          </ng-container>
-
-          <!-- Category Column -->
-          <ng-container matColumnDef="category">
-            <mat-header-cell *matHeaderCellDef>Category</mat-header-cell>
-            <mat-cell *matCellDef="let item">{{ item.category }}</mat-cell>
-          </ng-container>
-
-          <!-- Price Column -->
-          <ng-container matColumnDef="price">
-            <mat-header-cell *matHeaderCellDef>Price</mat-header-cell>
-            <mat-cell *matCellDef="let item">${{ item.price | number:'1.2-2' }}</mat-cell>
-          </ng-container>
-
-          <!-- Availability Column -->
-          <ng-container matColumnDef="isAvailable">
-            <mat-header-cell *matHeaderCellDef>Available</mat-header-cell>
-            <mat-cell *matCellDef="let item">
-              <span [class.available]="item.isAvailable" [class.unavailable]="!item.isAvailable">
-                {{ item.isAvailable ? 'Yes' : 'No' }}
-              </span>
-            </mat-cell>
-          </ng-container>
-
-          <!-- Preparation Time Column -->
-          <ng-container matColumnDef="preparationTime">
-            <mat-header-cell *matHeaderCellDef>Prep Time</mat-header-cell>
-            <mat-cell *matCellDef="let item">{{ item.preparationTime }} min</mat-cell>
-          </ng-container>
-
-          <!-- Header and Row Declarations -->
-          <mat-header-row *matHeaderRowDef="displayedColumns"></mat-header-row>
-          <mat-row 
-            *matRowDef="let row; columns: displayedColumns"
-            (click)="selectMenuItem(row)"
-            class="menu-row">
-          </mat-row>
-        </mat-table>
-
-        <!-- No Data Message -->
-        <div *ngIf="(menuItems$ | async)?.length === 0" class="no-data">
-          <p>No menu items available</p>
+      <!-- Item Details -->
+      <div class="item-details">
+        <h3 class="item-name">{{ item.name }}</h3>
+        <p class="item-description">{{ item.itemDescription }}</p>
+        
+        <div class="item-meta">
+          <mat-chip class="category-chip">{{ item.classification }}</mat-chip>
+          <span class="item-price">₹{{ item.price | number:'1.2-2' }}</span>
+          <mat-chip [class.available]="item.itemAvailable" 
+                   [class.unavailable]="!item.itemAvailable">
+            {{ item.itemAvailable ? 'Available' : 'Unavailable' }}
+          </mat-chip>
         </div>
       </div>
-    </mat-card-content>
-  </mat-card>
 
-  <!-- Categories Section -->
-  <mat-card class="categories-card">
-    <mat-card-header>
-      <mat-card-title>Categories</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <div *ngIf="categories$ | async as categories" class="categories-list">
-        <span *ngFor="let category of categories" class="category-chip">
-          {{ category }}
-        </span>
+      <!-- Action Buttons (visible on hover) -->
+      <div class="item-actions">
+        <button mat-icon-button 
+                color="primary"
+                (click)="editMenuItem(item)"
+                matTooltip="Edit">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button 
+                color="warn"
+                (click)="deleteMenuItem(item)"
+                matTooltip="Delete">
+          <mat-icon>delete</mat-icon>
+        </button>
       </div>
-    </mat-card-content>
-  </mat-card>
+    </div>
+  </div>
 </div>
