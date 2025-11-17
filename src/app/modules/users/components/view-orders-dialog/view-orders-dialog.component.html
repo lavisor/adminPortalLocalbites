@@ -1,0 +1,58 @@
+<div class="view-orders-dialog">
+  <h2 mat-dialog-title>
+    <mat-icon>receipt_long</mat-icon>
+    Orders for {{ data.user.name }}
+  </h2>
+  
+  <mat-dialog-content>
+    <div *ngIf="orders.length === 0" class="no-orders">
+      <mat-icon>shopping_cart</mat-icon>
+      <p>No orders found</p>
+    </div>
+
+    <table mat-table [dataSource]="orders" *ngIf="orders.length > 0" class="orders-table">
+      <!-- Order Number Column -->
+      <ng-container matColumnDef="orderNumber">
+        <th mat-header-cell *matHeaderCellDef>Order #</th>
+        <td mat-cell *matCellDef="let order">{{ order.orderNumber }}</td>
+      </ng-container>
+
+      <!-- Date Column -->
+      <ng-container matColumnDef="date">
+        <th mat-header-cell *matHeaderCellDef>Date</th>
+        <td mat-cell *matCellDef="let order">{{ order.date | date:'MMM d, y' }}</td>
+      </ng-container>
+
+      <!-- Items Column -->
+      <ng-container matColumnDef="items">
+        <th mat-header-cell *matHeaderCellDef>Items</th>
+        <td mat-cell *matCellDef="let order">{{ getItemsSummary(order.items) }}</td>
+      </ng-container>
+
+      <!-- Total Column -->
+      <ng-container matColumnDef="total">
+        <th mat-header-cell *matHeaderCellDef>Total</th>
+        <td mat-cell *matCellDef="let order">₹{{ order.total | number:'1.2-2' }}</td>
+      </ng-container>
+
+      <!-- Status Column -->
+      <ng-container matColumnDef="status">
+        <th mat-header-cell *matHeaderCellDef>Status</th>
+        <td mat-cell *matCellDef="let order">
+          <mat-chip [class]="'status-' + order.status">
+            {{ order.status | titlecase }}
+          </mat-chip>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="onClose()">
+      Close
+    </button>
+  </mat-dialog-actions>
+</div>

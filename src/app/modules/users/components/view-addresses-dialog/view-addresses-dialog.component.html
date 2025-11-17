@@ -1,0 +1,35 @@
+<div class="view-addresses-dialog">
+  <h2 mat-dialog-title>
+    <mat-icon>location_on</mat-icon>
+    Addresses for {{ data.user.name }}
+  </h2>
+  
+  <mat-dialog-content>
+    <div *ngIf="addresses.length === 0" class="no-addresses">
+      <mat-icon>location_off</mat-icon>
+      <p>No addresses found</p>
+    </div>
+
+    <mat-list *ngIf="addresses.length > 0">
+      <mat-list-item *ngFor="let address of addresses; let last = last">
+        <div class="address-item">
+          <div class="address-header">
+            <span class="address-label">{{ address.label }}</span>
+            <mat-chip *ngIf="address.isDefault" class="default-chip">Default</mat-chip>
+          </div>
+          <div class="address-details">
+            <p class="street">{{ address.street }}</p>
+            <p class="location">{{ address.city }}, {{ address.state }} {{ address.zipCode }}</p>
+          </div>
+        </div>
+        <mat-divider *ngIf="!last"></mat-divider>
+      </mat-list-item>
+    </mat-list>
+  </mat-dialog-content>
+  
+  <mat-dialog-actions align="end">
+    <button mat-raised-button color="primary" (click)="onClose()">
+      Close
+    </button>
+  </mat-dialog-actions>
+</div>

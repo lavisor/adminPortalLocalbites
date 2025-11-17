@@ -1,0 +1,100 @@
+.view-addresses-dialog {
+  min-width: 500px;
+  max-width: 600px;
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 500;
+
+    mat-icon {
+      color: #1976d2;
+    }
+  }
+
+  mat-dialog-content {
+    padding: 20px 0;
+    max-height: 400px;
+
+    .no-addresses {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px;
+      text-align: center;
+      color: rgba(0, 0, 0, 0.5);
+
+      mat-icon {
+        font-size: 48px;
+        width: 48px;
+        height: 48px;
+        margin-bottom: 16px;
+      }
+
+      p {
+        margin: 0;
+        font-size: 1rem;
+      }
+    }
+
+    mat-list {
+      padding: 0;
+    }
+
+    mat-list-item {
+      height: auto;
+      padding: 16px 0;
+
+      .address-item {
+        width: 100%;
+
+        .address-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          margin-bottom: 8px;
+
+          .address-label {
+            font-size: 1.1rem;
+            font-weight: 500;
+            color: #333;
+          }
+
+          .default-chip {
+            background-color: #4caf50;
+            color: white;
+            font-size: 0.75rem;
+            height: 24px;
+          }
+        }
+
+        .address-details {
+          .street {
+            margin: 0 0 4px 0;
+            color: rgba(0, 0, 0, 0.87);
+            font-size: 0.95rem;
+          }
+
+          .location {
+            margin: 0;
+            color: rgba(0, 0, 0, 0.6);
+            font-size: 0.9rem;
+          }
+        }
+      }
+    }
+
+    mat-divider {
+      margin-top: 16px;
+    }
+  }
+
+  mat-dialog-actions {
+    padding: 8px 0 0 0;
+    margin: 0;
+  }
+}
