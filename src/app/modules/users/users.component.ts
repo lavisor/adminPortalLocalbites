@@ -7,13 +7,12 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { Router } from '@angular/router';
 import { Observable, combineLatest } from 'rxjs';
 import { map, startWith } from 'rxjs/operators';
 import { UserFacade } from '../../data/users/ngrx/user.facade';
 import { User } from '../../data/users/models/user.model';
-import { ViewAddressesDialogComponent } from './components/view-addresses-dialog/view-addresses-dialog.component';
-import { ViewOrdersDialogComponent } from './components/view-orders-dialog/view-orders-dialog.component';
 
 @Component({
   selector: 'app-users',
@@ -27,7 +26,7 @@ import { ViewOrdersDialogComponent } from './components/view-orders-dialog/view-
     MatButtonModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    MatDialogModule
+    MatTooltipModule
   ],
   templateUrl: './users.component.html',
   styleUrl: './users.component.scss'
@@ -43,7 +42,7 @@ export class UsersComponent implements OnInit {
 
   constructor(
     private userFacade: UserFacade,
-    private dialog: MatDialog
+    private router: Router
   ) {
     this.users$ = this.userFacade.users$;
     this.loading$ = this.userFacade.loading$;
@@ -86,20 +85,49 @@ export class UsersComponent implements OnInit {
   }
 
   viewAddresses(user: User): void {
-    this.dialog.open(ViewAddressesDialogComponent, {
-      width: '600px',
-      data: { user }
-    });
+    this.router.navigate(['/users', user.id, 'addresses']);
   }
 
   viewOrders(user: User): void {
-    this.dialog.open(ViewOrdersDialogComponent, {
-      width: '900px',
-      data: { user }
-    });
+    this.router.navigate(['/users', user.id, 'orders']);
   }
 
   clearSearch(): void {
     this.searchControl.setValue('');
+  }
+
+  /**
+   * Get user's full name
+   */
+  getFullName(user: User): string {
+    const firstName = user.firstName || '';
+    const lastName = user.lastName || '';
+    const name = user.name || '';
+    
+    if (firstName || lastName) {
+      return `${firstName} ${lastName}`.trim();
+    }
+    
+    return name || 'Unknown User';
+  }
+
+  /**
+   * Get user initials for avatar
+   */
+  getInitials(user: User): string {
+    const fullName = this.getFullName(user);
+    const names = fullName.split(' ').filter(n => n.length > 0);
+    
+    if (names.length === 0) return 'U';
+    if (names.length === 1) return names[0].charAt(0).toUpperCase();
+    
+    return (names[0].charAt(0) + names[names.length - 1].charAt(0)).toUpperCase();
+  }
+
+  /**
+   * TrackBy function for performance optimization
+   */
+  trackByUserId(index: number, user: User): string {
+    return user.id;
   }
 }

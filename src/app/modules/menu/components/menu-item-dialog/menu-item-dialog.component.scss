@@ -1,44 +1,167 @@
-.dialog-form {
+/* Mobile-first menu item dialog styles */
+.menu-item-dialog {
+  padding: 16px;
+  max-width: 95vw;
+  max-height: 90vh;
+}
+
+.dialog-header {
   display: flex;
-  flex-direction: column;
-  gap: 16px;
-  min-width: 500px;
-  padding: 16px 0;
-}
-
-.full-width {
-  width: 100%;
-}
-
-.image-preview {
-  width: 100%;
-  max-width: 300px;
-  margin: 0 auto 20px;
-  border: 2px solid #e0e0e0;
-  border-radius: 8px;
-  overflow: hidden;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e0e0e0;
   
-  img {
-    width: 100%;
-    height: 200px;
-    object-fit: cover;
-    display: block;
+  h2 {
+    margin: 0;
+    font-size: 1.25rem;
+    font-weight: 500;
+    color: #333;
+  }
+  
+  button {
+    flex-shrink: 0;
   }
 }
 
-.availability-toggle {
-  padding: 8px 0;
-}
-
-mat-dialog-content {
-  max-height: 70vh;
+.dialog-content {
+  max-height: calc(90vh - 180px);
   overflow-y: auto;
 }
 
-mat-dialog-actions {
-  gap: 8px;
+.menu-item-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  
+  mat-form-field {
+    width: 100%;
+  }
+  
+  .form-row {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .image-upload {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    
+    .preview-image {
+      width: 100%;
+      max-height: 200px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid #e0e0e0;
+    }
+    
+    .upload-actions {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      
+      button {
+        width: 100%;
+      }
+    }
+  }
 }
 
-.header-actions{
-    gap:8px;
+.dialog-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid #e0e0e0;
+  
+  button {
+    width: 100%;
+    height: 44px;
+    font-size: 15px;
+  }
+}
+
+/* Tablet and up (768px+) */
+@media (min-width: 768px) {
+  .menu-item-dialog {
+    padding: 24px;
+    max-width: 600px;
+  }
+
+  .dialog-header {
+    margin-bottom: 24px;
+    padding-bottom: 16px;
+    
+    h2 {
+      font-size: 1.5rem;
+    }
+  }
+
+  .dialog-content {
+    max-height: calc(80vh - 180px);
+  }
+
+  .menu-item-form {
+    gap: 20px;
+    
+    .form-row {
+      flex-direction: row;
+      gap: 20px;
+      
+      mat-form-field {
+        flex: 1;
+      }
+    }
+    
+    .image-upload {
+      gap: 16px;
+      
+      .preview-image {
+        max-height: 250px;
+      }
+      
+      .upload-actions {
+        flex-direction: row;
+        justify-content: flex-start;
+        
+        button {
+          width: auto;
+          min-width: 120px;
+        }
+      }
+    }
+  }
+
+  .dialog-actions {
+    flex-direction: row;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 24px;
+    
+    button {
+      width: auto;
+      min-width: 100px;
+      height: 40px;
+      font-size: 14px;
+    }
+  }
+}
+
+/* Desktop and up (1024px+) */
+@media (min-width: 1024px) {
+  .menu-item-dialog {
+    max-width: 700px;
+  }
+
+  .menu-item-form {
+    .image-upload {
+      .preview-image {
+        max-height: 300px;
+      }
+    }
+  }
 }

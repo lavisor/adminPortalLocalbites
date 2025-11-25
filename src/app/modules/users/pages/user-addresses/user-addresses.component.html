@@ -1,0 +1,90 @@
+<div class="user-addresses-container">
+  <!-- Header with Breadcrumb -->
+  <div class="page-header">
+    <div class="breadcrumb">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="breadcrumb-text">
+        <a routerLink="/users" class="breadcrumb-link">Users</a>
+        <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+        <span class="breadcrumb-user">{{ getUserName() }}</span>
+        <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+        <span class="breadcrumb-current">Addresses</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Info Card -->
+  <mat-card class="user-info-card">
+    <div class="user-info">
+      <div class="user-avatar">
+        <mat-icon>person</mat-icon>
+      </div>
+      <div class="user-details">
+        <h2>{{ getUserName() }}</h2>
+        <p class="user-phone">
+          <mat-icon>phone</mat-icon>
+          {{ getUserPhone() }}
+        </p>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading addresses...</p>
+  </div>
+
+  <!-- Addresses Grid -->
+  <div *ngIf="!loading" class="addresses-grid">
+    <!-- Empty State -->
+    <div *ngIf="addresses.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">location_off</mat-icon>
+      <h3>No Addresses Found</h3>
+      <p>This user hasn't added any delivery addresses yet.</p>
+    </div>
+
+    <!-- Address Cards -->
+    <mat-card *ngFor="let address of addresses" class="address-card">
+      <!-- Card Header -->
+      <div class="card-header">
+        <div class="address-label-section">
+          <mat-icon class="address-type-icon">{{ getAddressIcon(address.label) }}</mat-icon>
+          <h3 class="address-label">{{ address.label }}</h3>
+        </div>
+        <mat-chip *ngIf="address.isDefault" class="default-chip" color="primary">
+          <mat-icon>check_circle</mat-icon>
+          Default
+        </mat-chip>
+      </div>
+
+      <!-- Address Details -->
+      <div class="address-details">
+        <div class="detail-row">
+          <mat-icon class="detail-icon">place</mat-icon>
+          <p class="street">{{ address.street }}</p>
+        </div>
+        <div class="detail-row">
+          <mat-icon class="detail-icon">location_city</mat-icon>
+          <p class="location">
+            {{ address.city }}, {{ address.state }}
+          </p>
+        </div>
+        <div class="detail-row">
+          <mat-icon class="detail-icon">markunread_mailbox</mat-icon>
+          <p class="zipcode">{{ address.zipCode }}</p>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Mobile Back Button -->
+  <div class="mobile-back-button">
+    <button mat-raised-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Users
+    </button>
+  </div>
+</div>

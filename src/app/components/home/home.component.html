@@ -2,8 +2,8 @@
   <!-- Sidenav -->
   <mat-sidenav
     #sidenav
-    mode="side"
-    [opened]="true"
+    [mode]="isMobile ? 'over' : 'side'"
+    [opened]="!isMobile"
     class="sidenav"
     [style.width.px]="isExpanded ? 250 : 64"
   >
@@ -26,6 +26,7 @@
         [routerLink]="item.path"
         routerLinkActive="active-link"
         class="nav-item"
+        (click)="onMenuItemClick()"
       >
         <mat-icon matListItemIcon>{{ item.icon }}</mat-icon>
         <span matListItemTitle *ngIf="isExpanded" class="nav-label">{{ item.label }}</span>
@@ -40,7 +41,10 @@
     <!-- Top Bar -->
     <mat-toolbar color="primary" class="top-bar">
       <div class="toolbar-left">
-        <span *ngIf="!isExpanded" class="hotel-name">{{ hotelName }}</span>
+        <button mat-icon-button *ngIf="isMobile" (click)="sidenav.toggle()" class="menu-button">
+          <mat-icon>menu</mat-icon>
+        </button>
+        <span class="hotel-name">{{ hotelName }}</span>
       </div>
       <div class="toolbar-right">
         <button mat-icon-button class="user-button">

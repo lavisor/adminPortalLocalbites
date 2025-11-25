@@ -1,48 +1,51 @@
+/* Mobile-first dashboard styles */
 .dashboard-container {
-  padding: 20px;
+  padding: 12px;
 
   h1 {
-    margin-bottom: 24px;
+    margin-bottom: 16px;
     color: #333;
+    font-size: 1.5rem;
   }
 
   mat-card {
-    margin-bottom: 20px;
+    margin-bottom: 16px;
   }
 
   .menu-access-demo {
     mat-card-header {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     .loading {
       text-align: center;
-      padding: 40px;
+      padding: 24px;
       color: #666;
+      font-size: 14px;
     }
 
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: 1fr;
+      gap: 12px;
+      margin-bottom: 16px;
 
       .stat-card {
         background: #f5f5f5;
-        padding: 20px;
+        padding: 16px;
         border-radius: 8px;
         text-align: center;
 
         h3 {
-          margin: 0 0 12px 0;
-          font-size: 14px;
+          margin: 0 0 8px 0;
+          font-size: 12px;
           color: #666;
           font-weight: 500;
         }
 
         .stat-value {
           margin: 0;
-          font-size: 32px;
+          font-size: 24px;
           font-weight: bold;
           color: #333;
 
@@ -55,11 +58,12 @@
 
     .categories-section,
     .available-items-section {
-      margin-bottom: 24px;
+      margin-bottom: 16px;
 
       h3 {
         margin-bottom: 12px;
         color: #333;
+        font-size: 1.1rem;
       }
 
       mat-list {
@@ -73,20 +77,28 @@
       justify-content: space-between;
       align-items: center;
       width: 100%;
+      gap: 8px;
 
       .item-name {
         font-weight: 500;
+        font-size: 14px;
+        flex: 1;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
 
       .item-price {
         color: #4caf50;
         font-weight: 600;
+        font-size: 14px;
+        flex-shrink: 0;
       }
     }
 
     .actions {
       text-align: center;
-      margin-top: 24px;
+      margin-top: 16px;
     }
   }
 
@@ -94,16 +106,18 @@
     background: #e8f5e9;
 
     mat-card-header {
-      margin-bottom: 16px;
+      margin-bottom: 12px;
     }
 
     mat-card-title {
       color: #2e7d32;
+      font-size: 1.1rem;
     }
 
     ul {
-      margin: 16px 0;
-      padding-left: 24px;
+      margin: 12px 0;
+      padding-left: 20px;
+      font-size: 14px;
 
       li {
         margin-bottom: 8px;
@@ -112,12 +126,177 @@
     }
 
     .note {
-      margin-top: 16px;
+      margin-top: 12px;
       padding: 12px;
       background: #fff;
       border-left: 4px solid #4caf50;
       border-radius: 4px;
       color: #666;
+      font-size: 14px;
+    }
+  }
+}
+
+/* Tablet and up (768px+) */
+@media (min-width: 768px) {
+  .dashboard-container {
+    padding: 20px;
+
+    h1 {
+      margin-bottom: 20px;
+      font-size: 1.75rem;
+    }
+
+    mat-card {
+      margin-bottom: 20px;
+    }
+
+    .menu-access-demo {
+      mat-card-header {
+        margin-bottom: 16px;
+      }
+
+      .loading {
+        padding: 32px;
+        font-size: 16px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 16px;
+        margin-bottom: 20px;
+
+        .stat-card {
+          padding: 18px;
+
+          h3 {
+            font-size: 13px;
+            margin-bottom: 10px;
+          }
+
+          .stat-value {
+            font-size: 28px;
+          }
+        }
+      }
+
+      .categories-section,
+      .available-items-section {
+        margin-bottom: 20px;
+
+        h3 {
+          font-size: 1.25rem;
+        }
+      }
+
+      .menu-item-row {
+        .item-name {
+          font-size: 15px;
+        }
+
+        .item-price {
+          font-size: 15px;
+        }
+      }
+
+      .actions {
+        margin-top: 20px;
+      }
+    }
+
+    .explanation-card {
+      mat-card-title {
+        font-size: 1.25rem;
+      }
+
+      ul {
+        margin: 16px 0;
+        font-size: 15px;
+
+        li {
+          margin-bottom: 8px;
+        }
+      }
+
+      .note {
+        margin-top: 16px;
+        font-size: 15px;
+      }
+    }
+  }
+}
+
+/* Desktop and up (1024px+) */
+@media (min-width: 1024px) {
+  .dashboard-container {
+    padding: 24px;
+
+    h1 {
+      margin-bottom: 24px;
+      font-size: 2rem;
+    }
+
+    .menu-access-demo {
+      .loading {
+        padding: 40px;
+      }
+
+      .stats-grid {
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+
+        .stat-card {
+          padding: 20px;
+
+          h3 {
+            font-size: 14px;
+            margin-bottom: 12px;
+          }
+
+          .stat-value {
+            font-size: 32px;
+          }
+        }
+      }
+
+      .categories-section,
+      .available-items-section {
+        margin-bottom: 24px;
+
+        h3 {
+          font-size: 1.5rem;
+        }
+      }
+
+      .menu-item-row {
+        .item-name {
+          font-size: 16px;
+        }
+
+        .item-price {
+          font-size: 16px;
+        }
+      }
+
+      .actions {
+        margin-top: 24px;
+      }
+    }
+
+    .explanation-card {
+      mat-card-title {
+        font-size: 1.5rem;
+      }
+
+      ul {
+        margin: 16px 0;
+        font-size: 16px;
+      }
+
+      .note {
+        font-size: 16px;
+      }
     }
   }
 }

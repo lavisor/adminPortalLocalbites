@@ -1,19 +1,18 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { Observable } from 'rxjs';
 import { MenuFacade } from '../../data/menu/ngrx/menu.facade';
 import { MenuItem } from '../../data/menu/models/menu.model';
 import { RESTAURANT_ID } from '../../data/data.const';
-import { MenuItemDialogComponent } from './components/menu-item-dialog/menu-item-dialog.component';
 
 @Component({
   selector: 'app-menu',
@@ -26,7 +25,6 @@ import { MenuItemDialogComponent } from './components/menu-item-dialog/menu-item
     MatCardModule,
     MatButtonModule,
     MatIconModule,
-    MatDialogModule,
     MatChipsModule,
     MatTooltipModule
   ],
@@ -42,7 +40,7 @@ export class MenuComponent implements OnInit {
 
   constructor(
     private menuFacade: MenuFacade,
-    private dialog: MatDialog
+    private router: Router
   ) {
     this.menuItems$ = this.menuFacade.getMenuList();
     this.loading$ = this.menuFacade.loading$;
@@ -75,37 +73,14 @@ export class MenuComponent implements OnInit {
 
 
   addMenuItem(): void {
-    this.editMenuItem(null);
+    this.router.navigate(['/menu/edit']);
   }
 
   /**
-   * Open edit dialog for a menu item
+   * Navigate to edit page for a menu item
    */
-  editMenuItem(item: any): void {
-    const dialogRef = this.dialog.open(MenuItemDialogComponent, {
-      width: '600px',
-      data: { item },
-      disableClose: true,
-    });
-
-    dialogRef.afterClosed().subscribe(result => {
-      if (result && result.action === 'save') {
-        const updatedItem: MenuItem = {
-          ...item,
-          ...result.data
-        };
-        this.menuFacade.updateMenuItem(item.id, updatedItem);
-      }
-
-      if(result && result.action === 'add'){
-        const updatedItem: MenuItem = {
-          ...item,
-          ...result.data,
-          restaurantId: RESTAURANT_ID,
-        };
-        this.menuFacade.createMenuItem(updatedItem);
-      }
-    });
+  editMenuItem(item: MenuItem): void {
+    this.router.navigate(['/menu/edit', item.id]);
   }
 
   /**

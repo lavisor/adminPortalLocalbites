@@ -1,0 +1,119 @@
+<div class="user-orders-container">
+  <!-- Header with Breadcrumb -->
+  <div class="page-header">
+    <div class="breadcrumb">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="breadcrumb-text">
+        <a routerLink="/users" class="breadcrumb-link">Users</a>
+        <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+        <span class="breadcrumb-user">{{ getUserName() }}</span>
+        <mat-icon class="breadcrumb-separator">chevron_right</mat-icon>
+        <span class="breadcrumb-current">Orders</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Info Card -->
+  <mat-card class="user-info-card">
+    <div class="user-info">
+      <div class="user-avatar">
+        <mat-icon>person</mat-icon>
+      </div>
+      <div class="user-details">
+        <h2>{{ getUserName() }}</h2>
+        <p class="user-phone">
+          <mat-icon>phone</mat-icon>
+          {{ getUserPhone() }}
+        </p>
+      </div>
+      <div class="orders-summary">
+        <div class="summary-item">
+          <span class="summary-label">Total Orders</span>
+          <span class="summary-value">{{ orders.length }}</span>
+        </div>
+      </div>
+    </div>
+  </mat-card>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <mat-spinner diameter="48"></mat-spinner>
+    <p>Loading orders...</p>
+  </div>
+
+  <!-- Orders List -->
+  <div *ngIf="!loading" class="orders-list">
+    <!-- Empty State -->
+    <div *ngIf="orders.length === 0" class="empty-state">
+      <mat-icon class="empty-icon">shopping_cart</mat-icon>
+      <h3>No Orders Found</h3>
+      <p>This user hasn't placed any orders yet.</p>
+    </div>
+
+    <!-- Order Cards -->
+    <mat-expansion-panel *ngFor="let order of orders" class="order-card" [class]="getStatusClass(order.status)">
+      <!-- Panel Header -->
+      <mat-expansion-panel-header>
+        <mat-panel-title>
+          <div class="order-header">
+            <div class="order-header-left">
+              <div class="order-number-section">
+                <mat-icon class="order-icon">receipt_long</mat-icon>
+                <span class="order-number">{{ order.orderNumber }}</span>
+              </div>
+              <span class="order-date">{{ formatDate(order.date) }}</span>
+            </div>
+            <div class="order-header-right">
+              <mat-chip [class]="getStatusClass(order.status)" class="status-chip">
+                <mat-icon>{{ getStatusIcon(order.status) }}</mat-icon>
+                {{ order.status | titlecase }}
+              </mat-chip>
+            </div>
+          </div>
+        </mat-panel-title>
+      </mat-expansion-panel-header>
+
+      <!-- Panel Content (Expanded) -->
+      <div class="order-details">
+        <!-- Items List -->
+        <div class="items-section">
+          <h4 class="section-title">
+            <mat-icon>restaurant_menu</mat-icon>
+            Order Items ({{ getItemsCount(order.items) }})
+          </h4>
+          <div class="items-list">
+            <div *ngFor="let item of order.items" class="item-row">
+              <div class="item-info">
+                <span class="item-name">{{ item.name }}</span>
+                <span class="item-quantity">× {{ item.quantity }}</span>
+              </div>
+              <span class="item-price">₹{{ (item.price * item.quantity) | number:'1.2-2' }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="order-summary">
+          <div class="summary-row subtotal">
+            <span>Subtotal</span>
+            <span>₹{{ order.total | number:'1.2-2' }}</span>
+          </div>
+          <div class="summary-row total">
+            <span>Total Amount</span>
+            <span class="total-amount">₹{{ order.total | number:'1.2-2' }}</span>
+          </div>
+        </div>
+      </div>
+    </mat-expansion-panel>
+  </div>
+
+  <!-- Mobile Back Button -->
+  <div class="mobile-back-button">
+    <button mat-raised-button color="primary" (click)="goBack()">
+      <mat-icon>arrow_back</mat-icon>
+      Back to Users
+    </button>
+  </div>
+</div>
