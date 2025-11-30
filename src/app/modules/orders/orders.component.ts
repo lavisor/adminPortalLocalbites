@@ -15,6 +15,7 @@ import { MatBadgeModule } from '@angular/material/badge';
 import { Subject, takeUntil } from 'rxjs';
 import { OrderFacade } from '../../data/orders/ngrx/order.facade';
 import { Order, OrderStatus, getAllOrderStatuses, getOrderStatusColor, getOrderStatusIcon } from '../../data/orders/models/order.model';
+import { OrderPollingService } from '../../services/order-polling.service';
 
 @Component({
   selector: 'app-orders',
@@ -51,7 +52,8 @@ export class OrdersComponent implements OnInit, OnDestroy {
   
   constructor(
     private orderFacade: OrderFacade,
-    private router: Router
+    private router: Router,
+    private orderPollingService: OrderPollingService
   ) {
     this.orders$ = this.orderFacade.filteredOrders$;
     this.loading$ = this.orderFacade.loading$;
@@ -152,5 +154,12 @@ export class OrdersComponent implements OnInit, OnDestroy {
 
   trackByOrderId(index: number, order: Order): string {
     return order.id;
+  }
+
+  /**
+   * Test notification system
+   */
+  async testNotificationSystem(): Promise<void> {
+    await this.orderPollingService.testNotification();
   }
 }

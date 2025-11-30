@@ -9,7 +9,7 @@ export interface OrderApiResponse {
   paymentMode: string;
   isPaymentSuccess: boolean;
   orderDate: string;
-  addressDetails?: AddressDetails;
+  deliveryAddress?: AddressDetails;
   createdAt: string;
   updatedAt: string;
   __v?: number;
@@ -26,12 +26,12 @@ export interface OrderItemApi {
 export interface AddressDetails {
   addressId: string;
   addressDetails: string;
-  addressType: string;
+  addressType?: string;
   receiverPhoneNumber: string;
   receiverName: string;
   latlong?: string;
-  isChosen: boolean;
-  isDefault: boolean;
+  isChosen?: boolean;
+  isDefault?: boolean;
 }
 
 // Internal Order model for the application
@@ -104,11 +104,11 @@ export function mapApiResponseToOrder(apiOrder: OrderApiResponse): Order {
     paymentMode: apiOrder.paymentMode,
     isPaymentSuccess: apiOrder.isPaymentSuccess,
     orderDate: new Date(apiOrder.orderDate),
-    addressDetails: apiOrder.addressDetails,
+    addressDetails: apiOrder.deliveryAddress,
     createdAt: new Date(apiOrder.createdAt),
     updatedAt: new Date(apiOrder.updatedAt),
-    customerName: apiOrder.addressDetails?.receiverName,
-    customerPhone: apiOrder.addressDetails?.receiverPhoneNumber
+    customerName: apiOrder.deliveryAddress?.receiverName,
+    customerPhone: apiOrder.deliveryAddress?.receiverPhoneNumber
   };
 }
 

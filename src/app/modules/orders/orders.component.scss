@@ -50,6 +50,20 @@
       transform: rotate(180deg);
     }
   }
+
+  .test-btn {
+    margin-left: auto;
+    box-shadow: 0 2px 8px rgba(255, 64, 129, 0.25) !important;
+    font-weight: 600;
+
+    mat-icon {
+      margin-right: 0.5rem;
+    }
+
+    &:hover {
+      box-shadow: 0 4px 12px rgba(255, 64, 129, 0.35) !important;
+    }
+  }
 }
 
 // Search Container
