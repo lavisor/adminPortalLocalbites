@@ -1,5 +1,68 @@
 /* You can add global styles to this file, and also import other style files */
 
+/* Toast Notification Styles */
+.custom-toast {
+  font-weight: 500;
+  font-size: 0.95rem;
+  
+  .mdc-snackbar__surface {
+    border-radius: 8px !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  }
+
+  .mat-mdc-snack-bar-label {
+    padding: 14px 16px !important;
+  }
+
+  .mat-mdc-button {
+    font-weight: 600 !important;
+  }
+}
+
+.toast-success {
+  .mdc-snackbar__surface {
+    background-color: #4caf50 !important;
+    color: white !important;
+  }
+  
+  .mat-mdc-button {
+    color: white !important;
+  }
+}
+
+.toast-error {
+  .mdc-snackbar__surface {
+    background-color: #f44336 !important;
+    color: white !important;
+  }
+  
+  .mat-mdc-button {
+    color: white !important;
+  }
+}
+
+.toast-warning {
+  .mdc-snackbar__surface {
+    background-color: #ff9800 !important;
+    color: white !important;
+  }
+  
+  .mat-mdc-button {
+    color: white !important;
+  }
+}
+
+.toast-info {
+  .mdc-snackbar__surface {
+    background-color: #2196f3 !important;
+    color: white !important;
+  }
+  
+  .mat-mdc-button {
+    color: white !important;
+  }
+}
+
 /* Mobile-first Base Styles */
 html, body { 
   height: 100%; 

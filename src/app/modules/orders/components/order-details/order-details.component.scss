@@ -1,0 +1,492 @@
+// Order Details Container
+.order-details-container {
+  padding: 1rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  min-height: calc(100vh - 120px);
+  background: #f5f5f5;
+
+  @media (min-width: 768px) {
+    padding: 1.5rem 2rem;
+  }
+}
+
+// Header
+.details-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  background: white;
+  padding: 1rem 1.5rem;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  .back-btn {
+    color: #666;
+    
+    &:hover {
+      color: #2196F3;
+      background: #e3f2fd;
+    }
+  }
+
+  .header-content {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    h1 {
+      margin: 0;
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: #1a1a1a;
+
+      @media (min-width: 768px) {
+        font-size: 1.75rem;
+      }
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 0.5rem;
+
+      button {
+        color: #666;
+
+        &:hover {
+          color: #2196F3;
+          background: #e3f2fd;
+        }
+      }
+    }
+  }
+}
+
+// Details Grid
+.details-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+
+  @media (min-width: 1024px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+// Card Styles
+mat-card {
+  border-radius: 12px !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  overflow: hidden !important;
+
+  &.items-card {
+    @media (min-width: 1024px) {
+      grid-column: 1 / -1;
+    }
+  }
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.25rem 1.5rem;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+
+  mat-icon {
+    font-size: 1.5rem;
+    width: 1.5rem;
+    height: 1.5rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+}
+
+// Info Row
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 0;
+  border-bottom: 1px solid #f0f0f0;
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .label {
+    color: #666;
+    font-size: 0.9rem;
+    font-weight: 500;
+  }
+
+  .value {
+    color: #1a1a1a;
+    font-size: 0.95rem;
+    font-weight: 600;
+    text-align: right;
+
+    &.success {
+      color: #4CAF50;
+    }
+
+    &.pending {
+      color: #FF9800;
+    }
+  }
+
+  .value-with-action {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+
+    button {
+      color: #666;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+
+      mat-icon {
+        font-size: 1.125rem;
+        width: 1.125rem;
+        height: 1.125rem;
+      }
+
+      &:hover {
+        color: #2196F3;
+        background: #e3f2fd;
+      }
+    }
+
+    a {
+      color: #2196F3;
+      width: 32px;
+      height: 32px;
+      line-height: 32px;
+
+      mat-icon {
+        font-size: 1.125rem;
+        width: 1.125rem;
+        height: 1.125rem;
+      }
+
+      &:hover {
+        background: #e3f2fd;
+      }
+    }
+  }
+}
+
+// Summary Content
+.summary-content {
+  padding: 1.5rem;
+
+  .status-row {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.5rem 0;
+  }
+
+  .status-controls {
+    width: 100%;
+  }
+
+  .status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    color: white;
+    font-weight: 600;
+    font-size: 0.85rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+
+    mat-icon {
+      font-size: 1.125rem;
+      width: 1.125rem;
+      height: 1.125rem;
+    }
+  }
+
+  .status-dropdown {
+    padding-top: 1rem;
+
+    mat-form-field {
+      width: 100%;
+
+      ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+        display: none;
+      }
+    }
+
+    .status-option {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+
+      mat-icon {
+        font-size: 1.25rem;
+        width: 1.25rem;
+        height: 1.25rem;
+      }
+    }
+  }
+}
+
+// Customer Content
+.customer-content {
+  padding: 1.5rem;
+}
+
+// Address Content
+.address-content {
+  padding: 1.5rem;
+
+  .address-info {
+    .address-type-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.375rem 0.75rem;
+      background: #e3f2fd;
+      color: #2196F3;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      margin-bottom: 1rem;
+
+      mat-icon {
+        font-size: 1.125rem;
+        width: 1.125rem;
+        height: 1.125rem;
+      }
+    }
+
+    .address-text {
+      color: #1a1a1a;
+      font-size: 0.95rem;
+      line-height: 1.6;
+      margin: 0 0 1rem;
+    }
+
+    .map-link {
+      a {
+        box-shadow: 0 2px 8px rgba(255, 152, 0, 0.25) !important;
+
+        mat-icon {
+          margin-right: 0.5rem;
+        }
+      }
+    }
+  }
+}
+
+// Items Content
+.items-content {
+  padding: 1.5rem;
+
+  .items-list {
+    .item-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1rem 0;
+
+      .item-details {
+        flex: 1;
+        min-width: 0;
+
+        .item-name {
+          font-weight: 600;
+          font-size: 1rem;
+          color: #1a1a1a;
+          margin-bottom: 0.25rem;
+          overflow: hidden;
+          text-overflow: ellipsis;
+        }
+
+        .item-price {
+          font-size: 0.875rem;
+          color: #666;
+        }
+      }
+
+      .item-total {
+        font-weight: 700;
+        font-size: 1rem;
+        color: #2e7d32;
+        margin-left: 1rem;
+        flex-shrink: 0;
+
+        .price-na {
+          color: #999;
+          font-size: 0.875rem;
+          font-weight: 500;
+        }
+      }
+    }
+  }
+
+  .section-divider {
+    margin: 1.5rem 0;
+  }
+
+  .bill-summary {
+    .bill-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.75rem 0;
+
+      .label {
+        color: #666;
+        font-size: 0.95rem;
+      }
+
+      .value {
+        font-weight: 600;
+        font-size: 1rem;
+        color: #1a1a1a;
+      }
+
+      &.subtotal {
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      &.total {
+        padding-top: 1rem;
+
+        .label {
+          font-size: 1.125rem;
+          font-weight: 600;
+          color: #1a1a1a;
+        }
+
+        .value {
+          font-size: 1.5rem;
+          font-weight: 700;
+          color: #2e7d32;
+        }
+      }
+    }
+  }
+}
+
+// No Info State
+.no-info {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+  text-align: center;
+  color: #999;
+
+  mat-icon {
+    font-size: 3rem;
+    width: 3rem;
+    height: 3rem;
+    margin-bottom: 1rem;
+    opacity: 0.5;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+}
+
+// Loading State
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1.5rem;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  p {
+    color: #666;
+    font-size: 1rem;
+    margin: 0;
+  }
+}
+
+// Error State
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 4rem 2rem;
+  gap: 1rem;
+  text-align: center;
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+
+  mat-icon {
+    font-size: 4rem;
+    width: 4rem;
+    height: 4rem;
+    color: #f44336;
+  }
+
+  h2 {
+    margin: 0;
+    color: #1a1a1a;
+    font-size: 1.25rem;
+  }
+
+  button {
+    margin-top: 1rem;
+
+    mat-icon {
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      margin-right: 0.5rem;
+    }
+  }
+}
+
+// Print Styles
+@media print {
+  .details-header {
+    .back-btn,
+    .header-actions {
+      display: none;
+    }
+  }
+
+  .status-dropdown,
+  .value-with-action button,
+  .map-link {
+    display: none;
+  }
+
+  mat-card {
+    break-inside: avoid;
+    page-break-inside: avoid;
+  }
+
+  .details-grid {
+    display: block;
+
+    mat-card {
+      margin-bottom: 1rem;
+    }
+  }
+}

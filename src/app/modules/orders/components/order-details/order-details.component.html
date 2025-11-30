@@ -1,0 +1,231 @@
+<div class="order-details-container">
+  @if (loading) {
+    <div class="loading-container">
+      <mat-spinner diameter="50"></mat-spinner>
+      <p>Loading order details...</p>
+    </div>
+  } @else if (error) {
+    <div class="error-container">
+      <mat-icon>error_outline</mat-icon>
+      <h2>{{ error }}</h2>
+      <button mat-raised-button color="primary" (click)="goBack()">
+        <mat-icon>arrow_back</mat-icon>
+        Go Back
+      </button>
+    </div>
+  } @else if (order) {
+    <!-- Header with Back Button -->
+    <div class="details-header">
+      <button mat-icon-button (click)="goBack()" class="back-btn">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div class="header-content">
+        <h1>Order Details</h1>
+        <div class="header-actions">
+          <button mat-icon-button (click)="printOrder()" title="Print Order">
+            <mat-icon>print</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="details-grid">
+      <!-- Order Summary Card -->
+      <mat-card class="summary-card">
+        <div class="card-header">
+          <mat-icon>receipt</mat-icon>
+          <h2>Order Summary</h2>
+        </div>
+        <mat-divider></mat-divider>
+        
+        <div class="summary-content">
+          <div class="info-row">
+            <span class="label">Order ID</span>
+            <div class="value-with-action">
+              <span class="value">{{ order.id }}</span>
+              <button mat-icon-button (click)="copyToClipboard(order.id)" title="Copy Order ID">
+                <mat-icon>content_copy</mat-icon>
+              </button>
+            </div>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Order Date</span>
+            <span class="value">{{ formatDate(order.orderDate) }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Payment Method</span>
+            <span class="value">{{ order.paymentMode }}</span>
+          </div>
+
+          <div class="info-row">
+            <span class="label">Payment Status</span>
+            <span class="value" [class.success]="order.isPaymentSuccess" [class.pending]="!order.isPaymentSuccess">
+              {{ order.isPaymentSuccess ? 'Paid' : 'Pending' }}
+            </span>
+          </div>
+
+          <div class="info-row status-row">
+            <span class="label">Order Status</span>
+            <div class="status-controls">
+              <div class="status-badge" [style.background-color]="getStatusColor(order.deliveryStatus)">
+                <mat-icon>{{ getStatusIcon(order.deliveryStatus) }}</mat-icon>
+                <span>{{ order.deliveryStatus }}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="status-dropdown">
+            <mat-form-field appearance="outline">
+              <mat-label>Update Status</mat-label>
+              <mat-select
+                [value]="order.deliveryStatus"
+                (selectionChange)="onStatusChange($event.value)"
+              >
+                @for (status of availableStatuses; track status) {
+                  <mat-option [value]="status">
+                    <div class="status-option">
+                      <mat-icon [style.color]="getStatusColor(status)">
+                        {{ getStatusIcon(status) }}
+                      </mat-icon>
+                      <span>{{ status }}</span>
+                    </div>
+                  </mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-card>
+
+      <!-- Customer Information Card -->
+      <mat-card class="customer-card">
+        <div class="card-header">
+          <mat-icon>person</mat-icon>
+          <h2>Customer Information</h2>
+        </div>
+        <mat-divider></mat-divider>
+        
+        <div class="customer-content">
+          @if (order.customerName || order.addressDetails?.receiverName) {
+            <div class="info-row">
+              <span class="label">Name</span>
+              <span class="value">{{ order.customerName || order.addressDetails?.receiverName || 'N/A' }}</span>
+            </div>
+          }
+
+          @if (order.customerPhone || order.addressDetails?.receiverPhoneNumber) {
+            <div class="info-row">
+              <span class="label">Phone</span>
+              <div class="value-with-action">
+                <span class="value">{{ order.customerPhone || order.addressDetails?.receiverPhoneNumber || 'N/A' }}</span>
+                @if (order.customerPhone || order.addressDetails?.receiverPhoneNumber) {
+                  <a [href]="'tel:' + (order.customerPhone || order.addressDetails?.receiverPhoneNumber)" mat-icon-button title="Call Customer">
+                    <mat-icon>phone</mat-icon>
+                  </a>
+                }
+              </div>
+            </div>
+          }
+
+          @if (!order.customerName && !order.customerPhone && !order.addressDetails) {
+            <div class="no-info">
+              <mat-icon>info</mat-icon>
+              <p>Customer information not available</p>
+            </div>
+          }
+        </div>
+      </mat-card>
+
+      <!-- Delivery Address Card -->
+      <mat-card class="address-card">
+        <div class="card-header">
+          <mat-icon>location_on</mat-icon>
+          <h2>Delivery Address</h2>
+        </div>
+        <mat-divider></mat-divider>
+        
+        <div class="address-content">
+          @if (order.addressDetails) {
+            <div class="address-info">
+              @if (order.addressDetails.addressType) {
+                <div class="address-type-badge">
+                  <mat-icon>home</mat-icon>
+                  <span>{{ order.addressDetails.addressType }}</span>
+                </div>
+              }
+              
+              <p class="address-text">{{ order.addressDetails.addressDetails }}</p>
+              
+              @if (order.addressDetails.latlong) {
+                <div class="map-link">
+                  <a [href]="getMapLink(order.addressDetails.latlong)" target="_blank" mat-raised-button color="accent">
+                    <mat-icon>map</mat-icon>
+                    Open in Maps
+                  </a>
+                </div>
+              }
+            </div>
+          } @else {
+            <div class="no-info">
+              <mat-icon>info</mat-icon>
+              <p>Delivery address not available</p>
+            </div>
+          }
+        </div>
+      </mat-card>
+
+      <!-- Order Items Card -->
+      <mat-card class="items-card">
+        <div class="card-header">
+          <mat-icon>restaurant_menu</mat-icon>
+          <h2>Order Items</h2>
+        </div>
+        <mat-divider></mat-divider>
+        
+        <div class="items-content">
+          <div class="items-list">
+            @for (item of order.orderItems; track item.menuId) {
+              <div class="item-row">
+                <div class="item-details">
+                  <div class="item-name">{{ item.name }}</div>
+                  @if (item.price) {
+                    <div class="item-price">{{ formatCurrency(item.price) }} × {{ item.quantity }}</div>
+                  } @else {
+                    <div class="item-price">Qty: {{ item.quantity }}</div>
+                  }
+                </div>
+                <div class="item-total">
+                  @if (item.price) {
+                    {{ formatCurrency(getItemTotal(item)) }}
+                  } @else {
+                    <span class="price-na">Price N/A</span>
+                  }
+                </div>
+              </div>
+              @if (!$last) {
+                <mat-divider></mat-divider>
+              }
+            }
+          </div>
+
+          <mat-divider class="section-divider"></mat-divider>
+
+          <!-- Bill Summary -->
+          <div class="bill-summary">
+            <div class="bill-row subtotal">
+              <span class="label">Subtotal</span>
+              <span class="value">{{ formatCurrency(order.billAmount) }}</span>
+            </div>
+            
+            <div class="bill-row total">
+              <span class="label">Total Amount</span>
+              <span class="value">{{ formatCurrency(order.billAmount) }}</span>
+            </div>
+          </div>
+        </div>
+      </mat-card>
+    </div>
+  }
+</div>

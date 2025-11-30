@@ -66,6 +66,27 @@ export class OrderEffects {
     )
   );
 
+  updateOrderStatus$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OrderActions.updateOrderStatus),
+      mergeMap((action) =>
+        this.orderService.updateOrderStatus(action.id, action.status).pipe(
+          map((order) => OrderActions.updateOrderSuccess({ order })),
+          catchError((error) =>
+            of(OrderActions.updateOrderFailure({ error: error.message }))
+          )
+        )
+      )
+    )
+  );
+
+  refreshOrders$ = createEffect(() =>
+    this.actions$.pipe(
+      ofType(OrderActions.refreshOrders),
+      map(() => OrderActions.loadOrders({ forceRefresh: true }))
+    )
+  );
+
   deleteOrder$ = createEffect(() =>
     this.actions$.pipe(
       ofType(OrderActions.deleteOrder),

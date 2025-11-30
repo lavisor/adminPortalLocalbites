@@ -1,132 +1,170 @@
 import { createFeatureSelector, createSelector } from '@ngrx/store';
 import { OrderState } from '../models/order-state.model';
-import { orderAdapter } from './order.state';
-import { OrderStatus } from '../models/order.model';
+import { Order, OrderStatus, isOngoingOrder, isHistoryOrder } from '../models/order.model';
 
-// Feature selector
 export const selectOrderState = createFeatureSelector<OrderState>('orders');
 
-// Entity selectors
-const { selectAll, selectEntities, selectIds, selectTotal } = orderAdapter.getSelectors();
-
-// Select all orders
+// Base selectors
 export const selectAllOrders = createSelector(
   selectOrderState,
-  selectAll
+  (state: OrderState) => state.orders
 );
 
-// Select order entities
-export const selectOrderEntities = createSelector(
-  selectOrderState,
-  selectEntities
-);
-
-// Select order IDs
-export const selectOrderIds = createSelector(
-  selectOrderState,
-  selectIds
-);
-
-// Select total count
-export const selectOrderTotal = createSelector(
-  selectOrderState,
-  selectTotal
-);
-
-// Select loading state
 export const selectOrderLoading = createSelector(
   selectOrderState,
-  (state) => state.loading
+  (state: OrderState) => state.loading
 );
 
-// Select loaded state
 export const selectOrderLoaded = createSelector(
   selectOrderState,
-  (state) => state.loaded
+  (state: OrderState) => state.loaded
 );
 
-// Select error state
 export const selectOrderError = createSelector(
   selectOrderState,
-  (state) => state.error
+  (state: OrderState) => state.error
 );
 
-// Select last updated
 export const selectOrderLastUpdated = createSelector(
   selectOrderState,
-  (state) => state.lastUpdated
+  (state: OrderState) => state.lastUpdated
 );
 
-// Select selected order ID
+export const selectOrderFilters = createSelector(
+  selectOrderState,
+  (state: OrderState) => state.filters
+);
+
 export const selectSelectedOrderId = createSelector(
   selectOrderState,
-  (state) => state.selectedOrderId
+  (state: OrderState) => state.selectedOrderId
 );
 
-// Select the selected order
+// Selected order
 export const selectSelectedOrder = createSelector(
-  selectOrderEntities,
+  selectAllOrders,
   selectSelectedOrderId,
-  (entities, selectedId) => selectedId ? entities[selectedId] : null
+  (orders: Order[], selectedId: string | null) => 
+    selectedId ? orders.find(order => order.id === selectedId) : null
 );
 
-// Select filter status
-export const selectFilterStatus = createSelector(
-  selectOrderState,
-  (state) => state.filterStatus
+// Order by ID
+export const selectOrderById = (id: string) => createSelector(
+  selectAllOrders,
+  (orders: Order[]) => orders.find(order => order.id === id)
 );
 
-// Select filtered orders
+// Orders by user
+export const selectOrdersByUser = (userId: string) => createSelector(
+  selectAllOrders,
+  (orders: Order[]) => orders.filter(order => order.userId === userId)
+);
+
+// Orders by status
+export const selectOrdersByStatus = (status: OrderStatus) => createSelector(
+  selectAllOrders,
+  (orders: Order[]) => orders.filter(order => order.deliveryStatus === status)
+);
+
+// Ongoing orders (not completed, cancelled, or rejected)
+export const selectOngoingOrders = createSelector(
+  selectAllOrders,
+  (orders: Order[]) => orders.filter(order => isOngoingOrder(order.deliveryStatus))
+);
+
+// History orders (completed, cancelled, or rejected)
+export const selectHistoryOrders = createSelector(
+  selectAllOrders,
+  (orders: Order[]) => orders.filter(order => isHistoryOrder(order.deliveryStatus))
+);
+
+// Filtered orders based on current filters
 export const selectFilteredOrders = createSelector(
   selectAllOrders,
-  selectFilterStatus,
-  (orders, filterStatus) => {
-    if (!filterStatus) return orders;
-    return orders.filter(order => order.status === filterStatus);
+  selectOrderFilters,
+  (orders: Order[], filters) => {
+    let filtered = [...orders];
+
+    // Filter by tab (ongoing/history)
+    if (filters.tab === 'ongoing') {
+      filtered = filtered.filter(order => isOngoingOrder(order.deliveryStatus));
+    } else if (filters.tab === 'history') {
+      filtered = filtered.filter(order => isHistoryOrder(order.deliveryStatus));
+    }
+
+    // Filter by specific status
+    if (filters.status) {
+      filtered = filtered.filter(order => order.deliveryStatus === filters.status);
+    }
+
+    // Filter by search term
+    if (filters.searchTerm) {
+      const searchLower = filters.searchTerm.toLowerCase();
+      filtered = filtered.filter(order => {
+        const matchesId = order.id.toLowerCase().includes(searchLower);
+        const matchesCustomerName = order.customerName?.toLowerCase().includes(searchLower);
+        const matchesCustomerPhone = order.customerPhone?.includes(searchLower);
+        const matchesItems = order.orderItems.some(item => 
+          item.name.toLowerCase().includes(searchLower)
+        );
+        
+        return matchesId || matchesCustomerName || matchesCustomerPhone || matchesItems;
+      });
+    }
+
+    // Sort by order date (newest first)
+    return filtered.sort((a, b) => 
+      new Date(b.orderDate).getTime() - new Date(a.orderDate).getTime()
+    );
   }
 );
 
-// Select orders by status
-export const selectOrdersByStatus = (status: OrderStatus) =>
-  createSelector(selectAllOrders, (orders) =>
-    orders.filter((order) => order.status === status)
-  );
-
-// Select pending orders
+// Pending orders
 export const selectPendingOrders = createSelector(
   selectAllOrders,
-  (orders) => orders.filter((order) => order.status === OrderStatus.PENDING)
+  (orders: Order[]) => orders.filter(order => order.deliveryStatus === OrderStatus.PENDING)
 );
 
-// Select active orders (not delivered or cancelled)
+// Active orders (accepted, preparing, ready, or in delivery)
 export const selectActiveOrders = createSelector(
   selectAllOrders,
-  (orders) => orders.filter((order) => 
-    order.status !== OrderStatus.DELIVERED && 
-    order.status !== OrderStatus.CANCELLED
+  (orders: Order[]) => orders.filter(order => 
+    order.deliveryStatus === OrderStatus.ACCEPTED ||
+    order.deliveryStatus === OrderStatus.PREPARING ||
+    order.deliveryStatus === OrderStatus.READY ||
+    order.deliveryStatus === OrderStatus.DELIVERY_IN_PROGRESS
   )
 );
 
-// Select completed orders
+// Completed orders
 export const selectCompletedOrders = createSelector(
   selectAllOrders,
-  (orders) => orders.filter((order) => order.status === OrderStatus.DELIVERED)
+  (orders: Order[]) => orders.filter(order => order.deliveryStatus === OrderStatus.COMPLETED)
 );
 
-// Select total revenue
+// Total revenue
 export const selectTotalRevenue = createSelector(
   selectAllOrders,
-  (orders) => orders
-    .filter(order => order.status === OrderStatus.DELIVERED)
-    .reduce((sum, order) => sum + order.totalAmount, 0)
+  (orders: Order[]) => orders.reduce((total, order) => total + order.billAmount, 0)
 );
 
-// Select order by ID
-export const selectOrderById = (id: string) =>
-  createSelector(selectOrderEntities, (entities) => entities[id] || null);
+// Count selectors
+export const selectOrdersCount = createSelector(
+  selectAllOrders,
+  (orders: Order[]) => orders.length
+);
 
-// Select orders by user
-export const selectOrdersByUser = (userId: string) =>
-  createSelector(selectAllOrders, (orders) =>
-    orders.filter((order) => order.userId === userId)
-  );
+export const selectOngoingOrdersCount = createSelector(
+  selectOngoingOrders,
+  (orders: Order[]) => orders.length
+);
+
+export const selectHistoryOrdersCount = createSelector(
+  selectHistoryOrders,
+  (orders: Order[]) => orders.length
+);
+
+export const selectPendingOrdersCount = createSelector(
+  selectPendingOrders,
+  (orders: Order[]) => orders.length
+);

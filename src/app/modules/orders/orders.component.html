@@ -1,1 +1,275 @@
-<p>orders works!</p>
+<div class="orders-container">
+  <!-- Header Section -->
+  <div class="orders-header">
+    <div class="header-title">
+      <h1>Orders</h1>
+      <button mat-icon-button (click)="refreshOrders()" class="refresh-btn" title="Refresh orders">
+        <mat-icon>refresh</mat-icon>
+      </button>
+    </div>
+
+    <!-- Search Bar -->
+    <div class="search-container">
+      <mat-form-field appearance="outline" class="search-field">
+        <mat-icon matPrefix>search</mat-icon>
+        <input
+          matInput
+          placeholder="Search by order ID, customer name, phone, or items"
+          [(ngModel)]="searchTerm"
+          (ngModelChange)="onSearch($event)"
+        />
+        @if (searchTerm) {
+          <button mat-icon-button matSuffix (click)="searchTerm = ''; onSearch('')">
+            <mat-icon>close</mat-icon>
+          </button>
+        }
+      </mat-form-field>
+    </div>
+  </div>
+
+  <!-- Tabs Section -->
+  <mat-tab-group 
+    [(selectedIndex)]="selectedTab" 
+    (selectedIndexChange)="onTabChange($event)"
+    class="orders-tabs"
+    animationDuration="300ms"
+  >
+    <!-- Ongoing Orders Tab -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span class="tab-label">
+          Ongoing
+          @if (ongoingCount$ | async; as count) {
+            <span class="tab-badge">{{ count }}</span>
+          }
+        </span>
+      </ng-template>
+      
+      <div class="tab-content">
+        @if (loading$ | async) {
+          <div class="loading-container">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p>Loading orders...</p>
+          </div>
+        } 
+        <!-- @else if (error$ | async; as error) {
+          <div class="error-container">
+            <mat-icon>error_outline</mat-icon>
+            <p>{{ error }}</p>
+            <button mat-raised-button color="primary" (click)="refreshOrders()">
+              Try Again
+            </button>
+          </div>
+        }  -->
+        @else {
+          @if ((orders$ | async)?.length === 0) {
+            <div class="empty-state">
+              <mat-icon>shopping_bag</mat-icon>
+              <h3>No ongoing orders</h3>
+              <p>New orders will appear here</p>
+            </div>
+          } @else {
+            <div class="orders-grid">
+              @for (order of orders$ | async; track trackByOrderId($index, order)) {
+                <mat-card class="order-card" [class.pending]="order.deliveryStatus === 'Pending'">
+                  <!-- Order Header -->
+                  <div class="order-header">
+                    <div class="order-id">
+                      <mat-icon class="id-icon">receipt</mat-icon>
+                      <span class="id-text">{{ order.id.substring(0, 8) }}...</span>
+                    </div>
+                    <div class="order-time">
+                      <mat-icon class="time-icon">schedule</mat-icon>
+                      <span>{{ formatDate(order.orderDate) }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Customer Info -->
+                  <div class="customer-info">
+                    <div class="customer-icon-wrapper">
+                      <mat-icon>person</mat-icon>
+                    </div>
+                    <div class="customer-details">
+                      <div class="customer-name">{{ getCustomerInfo(order) }}</div>
+                      <div class="customer-phone">{{ getCustomerPhone(order) }}</div>
+                    </div>
+                  </div>
+
+                  <!-- Order Items -->
+                  <div class="order-items">
+                    <mat-icon class="items-icon">restaurant_menu</mat-icon>
+                    <div class="items-content">
+                      @if (order.orderItems.length <= 2) {
+                        @for (item of order.orderItems; track item.menuId) {
+                          <div class="item-row">
+                            <span class="item-name">{{ item.name }}</span>
+                            <span class="item-qty">× {{ item.quantity }}</span>
+                          </div>
+                        }
+                      } @else {
+                        <div class="items-summary">
+                          {{ getItemsDisplay(order) }}
+                        </div>
+                      }
+                    </div>
+                  </div>
+
+                  <!-- Order Amount -->
+                  <div class="order-amount">
+                    <span class="amount-label">Total Amount</span>
+                    <span class="amount-value">{{ formatCurrency(order.billAmount) }}</span>
+                  </div>
+
+                  <!-- Status Dropdown -->
+                  <div class="order-status-section">
+                    <mat-form-field appearance="outline" class="status-field">
+                      <mat-label>Status</mat-label>
+                      <mat-select
+                        [value]="order.deliveryStatus"
+                        (selectionChange)="onStatusChange(order.id, $event.value)"
+                      >
+                        @for (status of availableStatuses; track status) {
+                          <mat-option [value]="status">
+                            <div class="status-option">
+                              <mat-icon [style.color]="getStatusColor(status)">
+                                {{ getStatusIcon(status) }}
+                              </mat-icon>
+                              <span>{{ status }}</span>
+                            </div>
+                          </mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                    
+                    <div class="status-badge" [style.background-color]="getStatusColor(order.deliveryStatus)">
+                      <mat-icon>{{ getStatusIcon(order.deliveryStatus) }}</mat-icon>
+                      <span>{{ order.deliveryStatus }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="order-actions">
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="viewOrderDetails(order.id)"
+                      class="view-details-btn"
+                    >
+                      <mat-icon>visibility</mat-icon>
+                      View Details
+                    </button>
+                  </div>
+                </mat-card>
+              }
+            </div>
+          }
+        }
+      </div>
+    </mat-tab>
+
+    <!-- History Orders Tab -->
+    <mat-tab>
+      <ng-template mat-tab-label>
+        <span class="tab-label">
+          History
+          @if (historyCount$ | async; as count) {
+            <span class="tab-badge">{{ count }}</span>
+          }
+        </span>
+      </ng-template>
+      
+      <div class="tab-content">
+        @if (loading$ | async) {
+          <div class="loading-container">
+            <mat-spinner diameter="50"></mat-spinner>
+            <p>Loading orders...</p>
+          </div>
+        } 
+        <!-- @else if (error$ | async; as error) {
+          <div class="error-container">
+            <mat-icon>error_outline</mat-icon>
+            <p>{{ error }}</p>
+            <button mat-raised-button color="primary" (click)="refreshOrders()">
+              Try Again
+            </button>
+          </div>
+        }  -->
+        @else {
+          @if ((orders$ | async)?.length === 0) {
+            <div class="empty-state">
+              <mat-icon>history</mat-icon>
+              <h3>No order history</h3>
+              <p>Completed and cancelled orders will appear here</p>
+            </div>
+          } @else {
+            <div class="orders-grid">
+              @for (order of orders$ | async; track trackByOrderId($index, order)) {
+                <mat-card class="order-card history-card">
+                  <!-- Order Header -->
+                  <div class="order-header">
+                    <div class="order-id">
+                      <mat-icon class="id-icon">receipt</mat-icon>
+                      <span class="id-text">{{ order.id.substring(0, 8) }}...</span>
+                    </div>
+                    <div class="order-time">
+                      <mat-icon class="time-icon">schedule</mat-icon>
+                      <span>{{ formatDate(order.orderDate) }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Customer Info -->
+                  <div class="customer-info">
+                    <div class="customer-icon-wrapper">
+                      <mat-icon>person</mat-icon>
+                    </div>
+                    <div class="customer-details">
+                      <div class="customer-name">{{ getCustomerInfo(order) }}</div>
+                      <div class="customer-phone">{{ getCustomerPhone(order) }}</div>
+                    </div>
+                  </div>
+
+                  <!-- Order Items -->
+                  <div class="order-items">
+                    <mat-icon class="items-icon">restaurant_menu</mat-icon>
+                    <div class="items-content">
+                      <div class="items-summary">
+                        {{ getItemsDisplay(order) }}
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Order Amount -->
+                  <div class="order-amount">
+                    <span class="amount-label">Total Amount</span>
+                    <span class="amount-value">{{ formatCurrency(order.billAmount) }}</span>
+                  </div>
+
+                  <!-- Status Badge (Read-only for history) -->
+                  <div class="order-status-section">
+                    <div class="status-badge" [style.background-color]="getStatusColor(order.deliveryStatus)">
+                      <mat-icon>{{ getStatusIcon(order.deliveryStatus) }}</mat-icon>
+                      <span>{{ order.deliveryStatus }}</span>
+                    </div>
+                  </div>
+
+                  <!-- Actions -->
+                  <div class="order-actions">
+                    <button
+                      mat-raised-button
+                      color="primary"
+                      (click)="viewOrderDetails(order.id)"
+                      class="view-details-btn"
+                    >
+                      <mat-icon>visibility</mat-icon>
+                      View Details
+                    </button>
+                  </div>
+                </mat-card>
+              }
+            </div>
+          }
+        }
+      </div>
+    </mat-tab>
+  </mat-tab-group>
+</div>

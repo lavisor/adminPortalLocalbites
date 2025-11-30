@@ -16,11 +16,15 @@ export class OrderFacade {
   error$: Observable<string | null>;
   selectedOrder$: Observable<Order | null | undefined>;
   filteredOrders$: Observable<Order[]>;
+  ongoingOrders$: Observable<Order[]>;
+  historyOrders$: Observable<Order[]>;
   pendingOrders$: Observable<Order[]>;
   activeOrders$: Observable<Order[]>;
   completedOrders$: Observable<Order[]>;
   totalRevenue$: Observable<number>;
   lastUpdated$: Observable<number | null>;
+  ongoingOrdersCount$: Observable<number>;
+  historyOrdersCount$: Observable<number>;
 
   constructor(private store: Store) {
     this.orders$ = this.store.select(OrderSelectors.selectAllOrders);
@@ -29,11 +33,15 @@ export class OrderFacade {
     this.error$ = this.store.select(OrderSelectors.selectOrderError);
     this.selectedOrder$ = this.store.select(OrderSelectors.selectSelectedOrder);
     this.filteredOrders$ = this.store.select(OrderSelectors.selectFilteredOrders);
+    this.ongoingOrders$ = this.store.select(OrderSelectors.selectOngoingOrders);
+    this.historyOrders$ = this.store.select(OrderSelectors.selectHistoryOrders);
     this.pendingOrders$ = this.store.select(OrderSelectors.selectPendingOrders);
     this.activeOrders$ = this.store.select(OrderSelectors.selectActiveOrders);
     this.completedOrders$ = this.store.select(OrderSelectors.selectCompletedOrders);
     this.totalRevenue$ = this.store.select(OrderSelectors.selectTotalRevenue);
     this.lastUpdated$ = this.store.select(OrderSelectors.selectOrderLastUpdated);
+    this.ongoingOrdersCount$ = this.store.select(OrderSelectors.selectOngoingOrdersCount);
+    this.historyOrdersCount$ = this.store.select(OrderSelectors.selectHistoryOrdersCount);
   }
 
   loadOrders(restaurantId?: string, forceRefresh = false): void {
@@ -62,6 +70,22 @@ export class OrderFacade {
 
   filterByStatus(status: string | null): void {
     this.store.dispatch(OrderActions.filterOrdersByStatus({ status }));
+  }
+
+  filterBySearch(searchTerm: string): void {
+    this.store.dispatch(OrderActions.filterOrdersBySearch({ searchTerm }));
+  }
+
+  setTab(tab: 'ongoing' | 'history'): void {
+    this.store.dispatch(OrderActions.setOrderTab({ tab }));
+  }
+
+  updateOrderStatus(id: string, status: string): void {
+    this.store.dispatch(OrderActions.updateOrderStatus({ id, status }));
+  }
+
+  refreshOrders(): void {
+    this.store.dispatch(OrderActions.refreshOrders());
   }
 
   getOrdersByStatus(status: OrderStatus): Observable<Order[]> {

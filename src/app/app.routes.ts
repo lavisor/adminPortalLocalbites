@@ -6,6 +6,7 @@ import { MenuComponent } from './modules/menu/menu.component';
 import { MenuEditComponent } from './modules/menu/components/menu-edit/menu-edit.component';
 import { NotificationsComponent } from './modules/notifications/notifications.component';
 import { OrdersComponent } from './modules/orders/orders.component';
+import { OrderDetailsComponent } from './modules/orders/components/order-details/order-details.component';
 import { ReportsComponent } from './modules/reports/reports.component';
 import { SettingsComponent } from './modules/settings/settings.component';
 import { UsersComponent } from './modules/users/users.component';
@@ -28,7 +29,13 @@ export const routes: Routes = [
         ]
       },
       { path: 'notifications', component: NotificationsComponent },
-      { path: 'orders', component: OrdersComponent },
+      { 
+        path: 'orders', 
+        children: [
+          { path: '', component: OrdersComponent },
+          { path: ':orderId', component: OrderDetailsComponent }
+        ]
+      },
       { path: 'reports', component: ReportsComponent },
       { path: 'settings', component: SettingsComponent },
       { 

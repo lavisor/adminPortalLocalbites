@@ -17,19 +17,19 @@ export const loadOrdersFailure = createAction(
   props<{ error: string }>()
 );
 
-// Load Single Order
+// Load Order By ID
 export const loadOrderById = createAction(
-  '[Order] Load Order By Id',
+  '[Order] Load Order By ID',
   props<{ id: string }>()
 );
 
 export const loadOrderByIdSuccess = createAction(
-  '[Order] Load Order By Id Success',
+  '[Order] Load Order By ID Success',
   props<{ order: Order }>()
 );
 
 export const loadOrderByIdFailure = createAction(
-  '[Order] Load Order By Id Failure',
+  '[Order] Load Order By ID Failure',
   props<{ error: string }>()
 );
 
@@ -65,6 +65,12 @@ export const updateOrderFailure = createAction(
   props<{ error: string }>()
 );
 
+// Update Order Status
+export const updateOrderStatus = createAction(
+  '[Order] Update Order Status',
+  props<{ id: string; status: string }>()
+);
+
 // Delete Order
 export const deleteOrder = createAction(
   '[Order] Delete Order',
@@ -93,7 +99,18 @@ export const filterOrdersByStatus = createAction(
   props<{ status: string | null }>()
 );
 
-// Clear Order State
-export const clearOrderState = createAction(
-  '[Order] Clear Order State'
+export const filterOrdersBySearch = createAction(
+  '[Order] Filter Orders By Search',
+  props<{ searchTerm: string }>()
 );
+
+export const setOrderTab = createAction(
+  '[Order] Set Order Tab',
+  props<{ tab: 'ongoing' | 'history' }>()
+);
+
+// Clear State
+export const clearOrderState = createAction('[Order] Clear Order State');
+
+// Refresh Orders
+export const refreshOrders = createAction('[Order] Refresh Orders');
