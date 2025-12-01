@@ -1,17 +1,6 @@
 import { Routes } from '@angular/router';
 import { HomeComponent } from './components/home/home.component';
-import { DashboardComponent } from './modules/dashboard/dashboard.component';
 import { LoginComponent } from './modules/login/login.component';
-import { MenuComponent } from './modules/menu/menu.component';
-import { MenuEditComponent } from './modules/menu/components/menu-edit/menu-edit.component';
-import { NotificationsComponent } from './modules/notifications/notifications.component';
-import { OrdersComponent } from './modules/orders/orders.component';
-import { OrderDetailsComponent } from './modules/orders/components/order-details/order-details.component';
-import { ReportsComponent } from './modules/reports/reports.component';
-import { SettingsComponent } from './modules/settings/settings.component';
-import { UsersComponent } from './modules/users/users.component';
-import { UserAddressesComponent } from './modules/users/pages/user-addresses/user-addresses.component';
-import { UserOrdersComponent } from './modules/users/pages/user-orders/user-orders.component';
 
 export const routes: Routes = [
   { path: 'login', component: LoginComponent },
@@ -19,35 +8,71 @@ export const routes: Routes = [
     path: '',
     component: HomeComponent,
     children: [
-      { path: 'dashboard', component: DashboardComponent },
+      { 
+        path: 'dashboard', 
+        loadComponent: () => import('./modules/dashboard/dashboard.component').then(m => m.DashboardComponent)
+      },
       { 
         path: 'menu', 
         children: [
-          { path: '', component: MenuComponent },
-          { path: 'edit', component: MenuEditComponent },
-          { path: 'edit/:id', component: MenuEditComponent }
+          { 
+            path: '', 
+            loadComponent: () => import('./modules/menu/menu.component').then(m => m.MenuComponent)
+          },
+          { 
+            path: 'edit', 
+            loadComponent: () => import('./modules/menu/components/menu-edit/menu-edit.component').then(m => m.MenuEditComponent)
+          },
+          { 
+            path: 'edit/:id', 
+            loadComponent: () => import('./modules/menu/components/menu-edit/menu-edit.component').then(m => m.MenuEditComponent)
+          }
         ]
       },
-      { path: 'notifications', component: NotificationsComponent },
+      { 
+        path: 'notifications', 
+        loadComponent: () => import('./modules/notifications/notifications.component').then(m => m.NotificationsComponent)
+      },
       { 
         path: 'orders', 
         children: [
-          { path: '', component: OrdersComponent },
-          { path: ':orderId', component: OrderDetailsComponent }
+          { 
+            path: '', 
+            loadComponent: () => import('./modules/orders/orders.component').then(m => m.OrdersComponent)
+          },
+          { 
+            path: ':orderId', 
+            loadComponent: () => import('./modules/orders/components/order-details/order-details.component').then(m => m.OrderDetailsComponent)
+          }
         ]
       },
-      { path: 'reports', component: ReportsComponent },
-      { path: 'settings', component: SettingsComponent },
+      { 
+        path: 'reports', 
+        loadComponent: () => import('./modules/reports/reports.component').then(m => m.ReportsComponent)
+      },
+      { 
+        path: 'settings', 
+        loadComponent: () => import('./modules/settings/settings.component').then(m => m.SettingsComponent)
+      },
       { 
         path: 'users', 
         children: [
-          { path: '', component: UsersComponent },
-          { path: ':userId/addresses', component: UserAddressesComponent },
-          { path: ':userId/orders', component: UserOrdersComponent }
+          { 
+            path: '', 
+            loadComponent: () => import('./modules/users/users.component').then(m => m.UsersComponent)
+          },
+          { 
+            path: ':userId/addresses', 
+            loadComponent: () => import('./modules/users/pages/user-addresses/user-addresses.component').then(m => m.UserAddressesComponent)
+          },
+          { 
+            path: ':userId/orders', 
+            loadComponent: () => import('./modules/users/pages/user-orders/user-orders.component').then(m => m.UserOrdersComponent)
+          }
         ]
       },
       { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
     ]
   },
-  { path: '**', redirectTo: '/dashboard' } // Wildcard route for 404
+  { path: '**', redirectTo: '/dashboard' }
 ];

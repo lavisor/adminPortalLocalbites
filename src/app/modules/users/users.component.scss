@@ -1,16 +1,6 @@
-// Breakpoints
 $mobile: 600px;
 $tablet: 900px;
 $desktop: 1200px;
-
-// Spacing
-$spacing-xs: 8px;
-$spacing-sm: 12px;
-$spacing-md: 16px;
-$spacing-lg: 24px;
-$spacing-xl: 32px;
-
-// Colors
 $primary-color: #1976d2;
 $background-color: #f5f5f5;
 $card-background: #ffffff;
@@ -21,49 +11,47 @@ $text-hint: rgba(0, 0, 0, 0.38);
 $error-color: #f44336;
 $error-background: #ffebee;
 
-// Container
 .users-container {
   min-height: 100vh;
   background-color: $background-color;
-  padding: $spacing-md;
+  padding: 16px;
   max-width: 1600px;
   margin: 0 auto;
 
   @media (min-width: $tablet) {
-    padding: $spacing-lg;
+    padding: 24px;
   }
 
   @media (min-width: $desktop) {
-    padding: $spacing-xl;
+    padding: 32px;
   }
 }
 
-// Header Section
 .users-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  margin-bottom: $spacing-lg;
+  margin-bottom: 24px;
   background-color: $card-background;
-  padding: $spacing-md;
+  padding: 16px;
   border-radius: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 
   @media (min-width: $tablet) {
     align-items: center;
-    padding: $spacing-lg;
+    padding: 24px;
   }
 
   .header-left {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: $spacing-xs;
+    gap: 8px;
 
     @media (min-width: $tablet) {
       flex-direction: row;
       align-items: baseline;
-      gap: $spacing-md;
+      gap: 16px;
     }
 
     h1 {
@@ -95,7 +83,7 @@ $error-background: #ffebee;
 
   .header-actions {
     display: flex;
-    gap: $spacing-sm;
+    gap: 12px;
     align-items: center;
 
     .refresh-btn {
@@ -116,14 +104,13 @@ $error-background: #ffebee;
   }
 }
 
-// Search Section
 .search-section {
-  margin-bottom: $spacing-lg;
+  margin-bottom: 24px;
   position: sticky;
   top: 0;
   z-index: 10;
   background-color: $background-color;
-  padding: $spacing-sm 0;
+  padding: 12px 0;
 
   @media (min-width: $tablet) {
     position: static;
@@ -141,7 +128,6 @@ $error-background: #ffebee;
   }
 }
 
-// Loading Container
 .loading-container {
   display: flex;
   align-items: center;
@@ -149,13 +135,13 @@ $error-background: #ffebee;
   min-height: 400px;
   background-color: $card-background;
   border-radius: 8px;
-  padding: $spacing-xl;
+  padding: 32px;
 
   .loading-content {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: $spacing-md;
+    gap: 16px;
 
     p {
       margin: 0;
@@ -165,16 +151,15 @@ $error-background: #ffebee;
   }
 }
 
-// Error Container
 .error-container {
   background-color: $error-background;
   border-left: 4px solid $error-color;
   border-radius: 8px;
-  padding: $spacing-lg;
+  padding: 24px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: $spacing-md;
+  gap: 16px;
   text-align: center;
 
   @media (min-width: $tablet) {
@@ -194,45 +179,41 @@ $error-background: #ffebee;
     flex: 1;
 
     h3 {
-      margin: 0 0 $spacing-sm 0;
+      margin: 0 0 12px 0;
       font-size: 18px;
       font-weight: 600;
       color: $error-color;
     }
 
     p {
-      margin: 0 0 $spacing-md 0;
+      margin: 0 0 16px 0;
       font-size: 14px;
       color: $text-primary;
     }
 
-    button {
-      mat-icon {
-        margin-right: $spacing-xs;
-      }
+    button mat-icon {
+      margin-right: 8px;
     }
   }
 }
 
-// Users Grid (Card Layout)
 .users-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: $spacing-md;
+  gap: 16px;
 
   @media (min-width: $mobile) {
     grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-lg;
+    gap: 24px;
   }
 
   @media (min-width: $tablet) {
     grid-template-columns: repeat(2, 1fr);
-    gap: $spacing-lg;
   }
 
   @media (min-width: $desktop) {
     grid-template-columns: repeat(3, 1fr);
-    gap: $spacing-xl;
+    gap: 32px;
   }
 
   @media (min-width: 1400px) {
@@ -240,16 +221,15 @@ $error-background: #ffebee;
   }
 }
 
-// User Card
 .user-card {
   background-color: $card-background;
   border-radius: 12px;
-  padding: $spacing-lg;
+  padding: 24px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: flex;
   flex-direction: column;
-  gap: $spacing-md;
+  gap: 16px;
   cursor: default;
 
   &:hover {
@@ -258,14 +238,13 @@ $error-background: #ffebee;
   }
 
   @media (min-width: $tablet) {
-    padding: $spacing-xl;
-    gap: $spacing-lg;
+    padding: 32px;
+    gap: 24px;
   }
 
-  // Card Header with Avatar
   .card-header {
     display: flex;
-    gap: $spacing-md;
+    gap: 16px;
     align-items: flex-start;
 
     .user-avatar {
@@ -291,10 +270,10 @@ $error-background: #ffebee;
 
     .user-info {
       flex: 1;
-      min-width: 0; // Allows text truncation
+      min-width: 0;
       display: flex;
       flex-direction: column;
-      gap: $spacing-xs;
+      gap: 8px;
 
       .user-name {
         margin: 0;
@@ -316,7 +295,7 @@ $error-background: #ffebee;
         color: $text-secondary;
         display: flex;
         align-items: center;
-        gap: $spacing-xs;
+        gap: 8px;
         line-height: 1.4;
 
         .info-icon {
@@ -334,24 +313,23 @@ $error-background: #ffebee;
     }
   }
 
-  // Card Actions
   .card-actions {
     display: flex;
-    gap: $spacing-sm;
-    padding-top: $spacing-sm;
+    gap: 12px;
+    padding-top: 12px;
     border-top: 1px solid $border-color;
 
     @media (min-width: $tablet) {
-      gap: $spacing-md;
+      gap: 16px;
     }
 
     .action-btn {
       flex: 1;
-      min-height: 48px; // Touch-friendly
+      min-height: 48px;
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: $spacing-xs;
+      gap: 8px;
       font-weight: 500;
       font-size: 14px;
       border-radius: 8px;
@@ -363,7 +341,6 @@ $error-background: #ffebee;
         height: 20px;
       }
 
-      // Show full text on mobile
       .btn-text {
         display: inline;
       }
@@ -372,7 +349,6 @@ $error-background: #ffebee;
         display: none;
       }
 
-      // On very small screens, show short text
       @media (max-width: 360px) {
         .btn-text {
           display: none;
@@ -394,7 +370,6 @@ $error-background: #ffebee;
   }
 }
 
-// Empty State
 .empty-state {
   grid-column: 1 / -1;
   display: flex;
@@ -403,7 +378,7 @@ $error-background: #ffebee;
   min-height: 400px;
   background-color: $card-background;
   border-radius: 12px;
-  padding: $spacing-xl;
+  padding: 32px;
 
   .empty-content {
     display: flex;
@@ -417,7 +392,7 @@ $error-background: #ffebee;
       width: 80px;
       height: 80px;
       color: $text-hint;
-      margin-bottom: $spacing-lg;
+      margin-bottom: 24px;
       opacity: 0.5;
 
       @media (min-width: $tablet) {
@@ -428,7 +403,7 @@ $error-background: #ffebee;
     }
 
     h3 {
-      margin: 0 0 $spacing-md 0;
+      margin: 0 0 16px 0;
       font-size: 20px;
       font-weight: 600;
       color: $text-primary;
@@ -439,7 +414,7 @@ $error-background: #ffebee;
     }
 
     p {
-      margin: 0 0 $spacing-lg 0;
+      margin: 0 0 24px 0;
       font-size: 14px;
       color: $text-secondary;
       line-height: 1.6;
@@ -460,42 +435,29 @@ $error-background: #ffebee;
   }
 }
 
-// Material Form Field Customizations
-::ng-deep {
-  .users-container {
-    // Search field styling
-    .search-field {
-      .mat-mdc-text-field-wrapper {
-        background-color: $card-background;
-      }
-
-      .mat-mdc-form-field-icon-prefix {
-        padding-right: $spacing-sm;
-        color: $text-hint;
-      }
+::ng-deep .users-container {
+  .search-field {
+    .mat-mdc-text-field-wrapper {
+      background-color: $card-background;
     }
 
-    // Button improvements
-    button {
-      &.mat-mdc-icon-button {
-        .mat-icon {
-          display: flex;
-          align-items: center;
-          justify-content: center;
-        }
-      }
+    .mat-mdc-form-field-icon-prefix {
+      padding-right: 12px;
+      color: $text-hint;
     }
+  }
 
-    // Card action buttons
-    .action-btn {
-      .mat-mdc-button-touch-target {
-        height: 48px;
-      }
-    }
+  button.mat-mdc-icon-button .mat-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .action-btn .mat-mdc-button-touch-target {
+    height: 48px;
   }
 }
 
-// Animations
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -515,67 +477,5 @@ $error-background: #ffebee;
     &:nth-child(#{$i}) {
       animation-delay: #{$i * 0.05}s;
     }
-  }
-}
-
-// Print Styles
-@media print {
-  .users-header,
-  .search-section,
-  .card-actions {
-    display: none !important;
-  }
-
-  .users-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
-    gap: $spacing-md !important;
-  }
-
-  .user-card {
-    break-inside: avoid;
-    box-shadow: none !important;
-    border: 1px solid $border-color;
-  }
-}
-
-// Loading skeleton (optional enhancement)
-.skeleton {
-  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-  background-size: 200% 100%;
-  animation: loading 1.5s ease-in-out infinite;
-}
-
-@keyframes loading {
-  0% {
-    background-position: 200% 0;
-  }
-  100% {
-    background-position: -200% 0;
-  }
-}
-
-// Accessibility improvements
-.user-card:focus-within {
-  outline: 2px solid $primary-color;
-  outline-offset: 2px;
-}
-
-// High contrast mode support
-@media (prefers-contrast: high) {
-  .user-card {
-    border: 2px solid $border-color;
-  }
-
-  .user-avatar {
-    border: 2px solid $card-background;
-  }
-}
-
-// Reduced motion support
-@media (prefers-reduced-motion: reduce) {
-  .user-card,
-  .action-btn {
-    animation: none !important;
-    transition: none !important;
   }
 }
