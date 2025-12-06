@@ -23,7 +23,7 @@ export class MenuService {
    * @returns Observable of menu items
    */
   getMenuItems(restaurantId: string): Observable<MenuItem[]> {
-    return this.http.get<any[]>(this.backendUrl + '/' + restaurantId).pipe(
+    return this.http.get<any[]>(this.backendUrl + '/' + restaurantId +'?isAdmin=true').pipe(
       map(response => transformMenuItems(response))
     );
   }
