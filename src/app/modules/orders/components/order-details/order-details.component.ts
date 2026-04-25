@@ -1,5 +1,6 @@
 import { Component, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
+import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute, Router } from '@angular/router';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -43,7 +44,8 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router,
     private location: Location,
-    private orderFacade: OrderFacade
+    private orderFacade: OrderFacade,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -148,5 +150,12 @@ export class OrderDetailsComponent implements OnInit, OnDestroy {
     if (!latlong) return '#';
     const coords = latlong.split(',');
     return `https://www.google.com/maps?q=${coords[0]},${coords[1]}`;
+  }
+
+  getQrSrc(latlong?: string) {
+    const mapLink = this.getMapLink(latlong);
+    return this.sanitizer.bypassSecurityTrustResourceUrl(
+      `https://quickchart.io/qr?text=${encodeURIComponent(mapLink)}`
+    );
   }
 }

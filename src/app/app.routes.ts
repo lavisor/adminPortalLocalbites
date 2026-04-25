@@ -71,8 +71,8 @@ export const routes: Routes = [
           }
         ]
       },
-      { path: '', redirectTo: '/dashboard', pathMatch: 'full' },
+      { path: '', redirectTo: '/orders', pathMatch: 'full' },
     ]
   },
-  { path: '**', redirectTo: '/dashboard' }
+  { path: '**', redirectTo: '/orders' }
 ];

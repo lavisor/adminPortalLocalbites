@@ -30,13 +30,9 @@ export class HomeComponent implements OnInit {
   hotelName = 'LocalBites Admin';
 
   menuItems = [
-    { path: '/dashboard', icon: 'dashboard', label: 'Dashboard' },
     { path: '/orders', icon: 'receipt_long', label: 'Orders' },
     { path: '/menu', icon: 'restaurant_menu', label: 'Menu' },
     { path: '/users', icon: 'people', label: 'Users' },
-    { path: '/reports', icon: 'assessment', label: 'Reports' },
-    { path: '/notifications', icon: 'notifications', label: 'Notifications' },
-    { path: '/settings', icon: 'settings', label: 'Settings' }
   ];
 
   ngOnInit() {

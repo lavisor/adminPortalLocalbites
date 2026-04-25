@@ -165,6 +165,13 @@
                     Open in Maps
                   </a>
                 </div>
+                <iframe
+                  [src]="getQrSrc(order.addressDetails.latlong)"
+                  width="150"
+                  height="150"
+                  title="QR code for delivery location"
+                  class="qr-iframe">
+                </iframe>
               }
             </div>
           } @else {
