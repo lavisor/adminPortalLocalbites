@@ -1,1 +1,10 @@
+<div class="push-banner" *ngIf="showPushBanner()">
+  <mat-icon>notifications_active</mat-icon>
+  <span class="push-banner__text">Enable order alerts to get notified when new orders arrive — even when the app is closed.</span>
+  <button type="button" mat-flat-button color="primary" (click)="enablePush()">Enable</button>
+  <button type="button" mat-icon-button aria-label="Dismiss" (click)="dismissPushBanner()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
 <router-outlet></router-outlet>
