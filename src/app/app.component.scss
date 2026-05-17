@@ -6,7 +6,6 @@
   align-items: center;
   gap: 12px;
   padding: 10px 16px;
-  background: #1976d2;
   color: #fff;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
 
@@ -18,5 +17,17 @@
     flex: 1;
     font-size: 14px;
     line-height: 1.4;
+  }
+
+  &__button {
+    flex-shrink: 0;
+  }
+
+  &--enabled {
+    background: #2e7d32; // green 800
+  }
+
+  &--disabled {
+    background: #c62828; // red 800
   }
 }

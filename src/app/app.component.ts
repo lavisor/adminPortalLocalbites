@@ -8,6 +8,8 @@ import { Subscription } from 'rxjs';
 import { OrderPollingService } from './services/order-polling.service';
 import { PushNotificationService } from './services/push-notification.service';
 
+type BannerState = 'hidden' | 'enabled' | 'disabled';
+
 @Component({
   selector: 'app-root',
   imports: [
@@ -23,10 +25,11 @@ import { PushNotificationService } from './services/push-notification.service';
 export class AppComponent implements OnInit, OnDestroy {
   title = 'admin-portal';
   private audioPreloaded = false;
+  private pushAutoPromptAttempted = false;
   private permissionSub: Subscription | null = null;
 
-  showPushBanner = signal(false);
-  pushBlocked = signal(false);
+  bannerState = signal<BannerState>('hidden');
+  busy = signal(false);
 
   constructor(
     private orderPollingService: OrderPollingService,
@@ -40,11 +43,23 @@ export class AppComponent implements OnInit, OnDestroy {
     this.pushNotificationService.syncExistingSubscription();
 
     this.permissionSub = this.pushNotificationService.getPermission$().subscribe((state) => {
-      this.showPushBanner.set(state === 'default');
-      this.pushBlocked.set(state === 'denied');
+      if (state === 'granted') {
+        this.bannerState.set('enabled');
+      } else if (state === 'denied') {
+        this.bannerState.set('disabled');
+      } else {
+        // 'default' or 'unsupported' → keep banner hidden; auto-prompt will run on first tap
+        this.bannerState.set('hidden');
+      }
     });
   }
 
+  /**
+   * First user gesture: preload audio (existing behavior) AND auto-trigger the
+   * push permission prompt if the user hasn't decided yet. The gesture is
+   * required by iOS Safari; Android Chrome doesn't require it but having it
+   * keeps the flow consistent.
+   */
   @HostListener('document:click')
   @HostListener('document:keydown')
   async onUserInteraction(): Promise<void> {
@@ -52,14 +67,37 @@ export class AppComponent implements OnInit, OnDestroy {
       await this.orderPollingService.preloadAudio();
       this.audioPreloaded = true;
     }
+
+    if (!this.pushAutoPromptAttempted && this.pushNotificationService.isSupported()) {
+      this.pushAutoPromptAttempted = true;
+      if ('Notification' in window && Notification.permission === 'default') {
+        await this.pushNotificationService.enable();
+      }
+    }
   }
 
   async enablePush(): Promise<void> {
-    await this.pushNotificationService.enable();
+    if (this.busy()) return;
+    this.busy.set(true);
+    try {
+      await this.pushNotificationService.enable();
+    } finally {
+      this.busy.set(false);
+    }
   }
 
-  dismissPushBanner(): void {
-    this.showPushBanner.set(false);
+  async disablePush(): Promise<void> {
+    if (this.busy()) return;
+    this.busy.set(true);
+    try {
+      await this.pushNotificationService.unsubscribe();
+      // After unsubscribe, browser permission may still be 'granted' but we're
+      // not subscribed anymore. Force the banner into 'disabled' state so the
+      // user has an obvious path back.
+      this.bannerState.set('disabled');
+    } finally {
+      this.busy.set(false);
+    }
   }
 
   ngOnDestroy(): void {
