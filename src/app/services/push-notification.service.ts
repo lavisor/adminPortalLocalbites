@@ -10,6 +10,7 @@ type PermissionState = 'default' | 'granted' | 'denied' | 'unsupported';
 @Injectable({ providedIn: 'root' })
 export class PushNotificationService {
   private readonly subscribeUrl = `${BACKEND_URL}/api/push/subscribe`;
+  private readonly unsubscribeUrl = `${BACKEND_URL}/api/push/unsubscribe`;
   private permission$ = new BehaviorSubject<PermissionState>(this.currentPermission());
   private initialized = false;
 
@@ -87,6 +88,33 @@ export class PushNotificationService {
   private currentPermission(): PermissionState {
     if (!('Notification' in window)) return 'unsupported';
     return Notification.permission as PermissionState;
+  }
+
+  /**
+   * Unsubscribe browser-side AND notify the backend so the row is deleted
+   * immediately (rather than waiting for the next push attempt to 410).
+   */
+  async unsubscribe(): Promise<void> {
+    if (!this.isSupported()) return;
+
+    try {
+      const sub = await firstValueFrom(this.swPush.subscription);
+      const endpoint = sub?.endpoint;
+
+      await this.swPush.unsubscribe().catch(() => {});
+
+      if (endpoint) {
+        await firstValueFrom(
+          this.http.post(this.unsubscribeUrl, { endpoint })
+        ).catch((err) => {
+          console.warn('Backend unsubscribe failed (will self-heal on next push 410):', err);
+        });
+      }
+
+      this.permission$.next(this.currentPermission());
+    } catch (err) {
+      console.warn('Unsubscribe failed:', err);
+    }
   }
 
   private async postSubscription(sub: PushSubscription): Promise<void> {

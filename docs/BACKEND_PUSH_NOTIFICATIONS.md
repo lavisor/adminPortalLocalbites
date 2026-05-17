@@ -13,8 +13,9 @@ The admin-portal frontend changes have already shipped. This document describes 
 1. Generate a **VAPID keypair** once; share the public key with the frontend, keep the private key on the server.
 2. Add a `push_subscriptions` table (or collection) keyed by `endpoint`.
 3. Expose `POST /api/push/subscribe` — idempotent upsert by `endpoint`.
-4. When a new order is created for a restaurant, look up all subscriptions for that `restaurantId` and call `webpush.sendNotification(...)` for each.
-5. On HTTP `410 Gone` or `404` from the push service, **delete** that subscription row.
+4. Expose `POST /api/push/unsubscribe` — delete by `endpoint`.
+5. When a new order is created for a restaurant, look up all subscriptions for that `restaurantId` and call `webpush.sendNotification(...)` for each.
+6. On HTTP `410 Gone` or `404` from the push service, **delete** that subscription row.
 
 That's it. No queues, no cron, no third-party push service account.
 
@@ -259,18 +260,40 @@ The `410 Gone` / `404 Not Found` branch in §4 above is the **only** cleanup pat
 
 ---
 
-## 6. Optional: `POST /api/push/unsubscribe`
+## 6. Endpoint: `POST /api/push/unsubscribe`
 
-Not needed for v1. The admin-portal currently has no "disable alerts" UI. If you add a settings toggle later, expose:
+**Called by:** the admin-portal when the merchant taps "Disable" on the in-app banner. The frontend also calls `PushSubscription.unsubscribe()` browser-side, so even if this endpoint fails or doesn't exist, the push channel is dead on the device — but the backend row would linger until the next push attempt returns 410. This endpoint exists to clean up immediately.
+
+### Request
 
 ```http
 POST /api/push/unsubscribe
+Content-Type: application/json
+
 { "endpoint": "https://fcm.googleapis.com/fcm/send/dXa..." }
 ```
 
-→ `DELETE FROM push_subscriptions WHERE endpoint = $1`.
+### Response
 
-Don't build this until the frontend asks for it.
+```http
+200 OK
+{ "ok": true }
+```
+
+Always return 200 even if the row doesn't exist — the call is best-effort cleanup, not a state-changing operation the client cares about.
+
+### Node.js / Express implementation
+
+```js
+app.post('/api/push/unsubscribe', async (req, res) => {
+  const { endpoint } = req.body;
+  if (!endpoint) {
+    return res.status(400).json({ error: 'endpoint required' });
+  }
+  await PushSubscription.deleteOne({ endpoint });
+  res.json({ ok: true });
+});
+```
 
 ---
 
@@ -340,6 +363,7 @@ Already implemented. Documented here so you can confirm the shapes match.
 - [ ] VAPID keys generated, public key sent to frontend, both stored as env vars
 - [ ] `push_subscriptions` table/collection created with unique index on `endpoint`
 - [ ] `POST /api/push/subscribe` deployed, returns 200, idempotent upsert verified with two back-to-back identical POSTs
+- [ ] `POST /api/push/unsubscribe` deployed, returns 200, deletes the row by `endpoint`
 - [ ] `notifyNewOrder()` wired into the order-creation flow
 - [ ] 410/404 pruning verified — uninstall the PWA on a test device, place an order, confirm the dead subscription row is deleted
 - [ ] End-to-end test passes: order placed → notification arrives on a locked Android phone with the PWA fully closed

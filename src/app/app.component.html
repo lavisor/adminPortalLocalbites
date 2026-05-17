@@ -1,10 +1,38 @@
-<div class="push-banner" *ngIf="showPushBanner()">
-  <mat-icon>notifications_active</mat-icon>
-  <span class="push-banner__text">Enable order alerts to get notified when new orders arrive — even when the app is closed.</span>
-  <button type="button" mat-flat-button color="primary" (click)="enablePush()">Enable</button>
-  <button type="button" mat-icon-button aria-label="Dismiss" (click)="dismissPushBanner()">
-    <mat-icon>close</mat-icon>
-  </button>
+<div
+  class="push-banner"
+  [class.push-banner--enabled]="bannerState() === 'enabled'"
+  [class.push-banner--disabled]="bannerState() === 'disabled'"
+  *ngIf="bannerState() !== 'hidden'"
+>
+  <ng-container *ngIf="bannerState() === 'enabled'">
+    <mat-icon>notifications_active</mat-icon>
+    <span class="push-banner__text">Order alerts are enabled</span>
+    <button
+      type="button"
+      mat-stroked-button
+      class="push-banner__button"
+      [disabled]="busy()"
+      (click)="disablePush()"
+    >
+      Disable
+    </button>
+  </ng-container>
+
+  <ng-container *ngIf="bannerState() === 'disabled'">
+    <mat-icon>notifications_off</mat-icon>
+    <span class="push-banner__text">
+      Order alerts are off. You won't be notified of new orders when the app is closed.
+    </span>
+    <button
+      type="button"
+      mat-flat-button
+      class="push-banner__button"
+      [disabled]="busy()"
+      (click)="enablePush()"
+    >
+      Enable
+    </button>
+  </ng-container>
 </div>
 
 <router-outlet></router-outlet>
