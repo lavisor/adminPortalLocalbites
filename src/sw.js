@@ -1,9 +1,8 @@
 /* eslint-disable */
-// Custom service worker for LocalBites Admin PWA.
-// Layers Web Push handling on top of Angular's ngsw-worker.js so we get
-// caching/asset behavior AND background notifications.
-
-importScripts('./ngsw-worker.js');
+// Push-only service worker for LocalBites Admin PWA.
+// No offline asset caching — the portal is online-only.
+// Do NOT importScripts('./ngsw-worker.js'): ngsw registers its own 'push'
+// listener that wins the event and prevents this file's handler from running.
 
 self.addEventListener('push', (event) => {
   const data = (() => {
