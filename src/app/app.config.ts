@@ -13,6 +13,7 @@ import { notificationReducer } from './data/notifications/ngrx/notification.redu
 import { NotificationEffects } from './data/notifications/ngrx/notification.effects';
 import { userReducer } from './data/users/ngrx/user.reducer';
 import { UserEffects } from './data/users/ngrx/user.effects';
+import { provideServiceWorker } from '@angular/service-worker';
 
 export const appConfig: ApplicationConfig = {
   providers: [
@@ -32,6 +33,10 @@ export const appConfig: ApplicationConfig = {
       autoPause: true,
       trace: false,
       traceLimit: 75
+    }),
+    provideServiceWorker('sw.js', {
+      enabled: !isDevMode(),
+      registrationStrategy: 'registerWhenStable:30000'
     })
   ]
 };
